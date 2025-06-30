@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.koin.lifecycle)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
+    implementation(libs.firebase.auth.ktx)
     ksp(libs.room.compiler)
     implementation(libs.navigation.compose)
     implementation(platform(libs.firebase.bom))
