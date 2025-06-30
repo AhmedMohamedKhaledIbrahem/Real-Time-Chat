@@ -13,7 +13,10 @@ koin = "4.1.0"
 room = "2.7.2"
 ksp = "2.2.0-2.0.2"
 nav = "2.9.0"
-mockk = "1.13.10"
+mockk = "1.14.4"
+firebase-bom = "33.16.0"
+google-services = "4.4.3"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -40,10 +43,15 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-database = { module = "com.google.firebase:firebase-database" }
+firebase-storage = { module = "com.google.firebase:firebase-storage" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 
