@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.ksp
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
+    id("kotlin-kapt")
 
 }
 
@@ -23,27 +25,39 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    
+
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            buildConfigField("String","DB_REFERENCE","\"users\"")
+            buildConfigField("String","DB_ROOM_REFERENCE","\"real_time_chat_app.db\"")
+        }
+
+        release {
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String","DB_REFERENCE","\"users\"")
+            buildConfigField("String","DB_ROOM_REFERENCE","\"real_time_chat_app.db\"")
+
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin{
-        compilerOptions{
+    kotlin {
+        compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
             freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
 }
@@ -58,19 +72,18 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.ktor.client.core)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
-    implementation(libs.koin.lifecycle)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    ksp(libs.room.compiler)
+    kapt(libs.room.kapt)
     implementation(libs.navigation.compose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.internet.connection.monitor)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.mockk.agent)
