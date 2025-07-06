@@ -16,7 +16,13 @@ fun Exception.toRemoteDataError(): AuthDataError = when (this) {
     is FirebaseAuthInvalidUserException -> AuthDataError.Network.USER_NOT_FOUND
     is FirebaseAuthUserCollisionException -> AuthDataError.Network.USER_ALREADY_EXISTS
     is FirebaseNetworkException -> AuthDataError.Network.NETWORK_UNAVAILABLE
-    is FirebaseAuthException -> AuthDataError.Network.PERMISSION_DENIED
+    is FirebaseAuthException -> {
+        when(this.errorCode){
+            "AUTH_FAILED" -> AuthDataError.Network.AUTH_FAILED
+            "NO_USER" -> AuthDataError.Network.NO_USER_LOGGED_IN
+            else -> AuthDataError.Network.UNKNOWN
+        }
+    }
     is FirebaseTooManyRequestsException -> AuthDataError.Network.TIMEOUT
     else -> AuthDataError.Network.UNKNOWN
 }
