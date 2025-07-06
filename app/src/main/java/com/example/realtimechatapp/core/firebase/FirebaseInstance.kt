@@ -4,15 +4,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 interface FirebaseInstance{
-    suspend fun firebaseDatabase(): FirebaseDatabase
-    suspend fun firebaseAuth(): FirebaseAuth
+     fun firebaseDatabase(): FirebaseDatabase
+     fun firebaseAuth(): FirebaseAuth
 }
 
 class FirebaseInstanceImpl: FirebaseInstance {
-    override suspend fun firebaseDatabase(): FirebaseDatabase {
+    override  fun firebaseDatabase(): FirebaseDatabase {
         return FirebaseDatabase.getInstance()
     }
-    override suspend fun firebaseAuth(): FirebaseAuth {
+    override  fun firebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }
 }
