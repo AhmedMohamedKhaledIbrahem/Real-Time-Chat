@@ -5,4 +5,12 @@ data class SignUpEntity(
     val email: String,
     val phoneNumber: String,
     val password: String,
-)
+) {
+    fun isValid(): Boolean {
+        return name.isBlank() ||
+                (email.isBlank() || !email.contains("@")) ||
+                phoneNumber.isBlank() ||
+                password.isBlank()
+
+    }
+}
