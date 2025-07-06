@@ -6,6 +6,7 @@ sealed interface AuthDataError: Error {
         USER_NOT_FOUND,
         USER_ALREADY_EXISTS,
         EMAIL_NOT_VERIFIED,
+        NO_USER_LOGGED_IN,
         PERMISSION_DENIED,
         NETWORK_UNAVAILABLE,
         TIMEOUT,
