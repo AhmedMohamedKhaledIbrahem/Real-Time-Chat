@@ -16,6 +16,8 @@ mockk = "1.14.4"
 firebase-bom = "33.16.0"
 google-services = "4.4.3"
 firebaseAuthKtx = "23.2.1"
+firebase-crashlytics = "19.4.4"
+timber = "5.0.1"
 internetConnectionMonitor = "v1.0.2"
 
 [libraries]
@@ -46,6 +48,8 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-database = { module = "com.google.firebase:firebase-database" }
 firebase-storage = { module = "com.google.firebase:firebase-storage" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "firebase-crashlytics" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 internet-connection-monitor = { module = "com.github.AhmedMohamedKhaledIbrahem:Internet-Connection-Monitor",version.ref = "internetConnectionMonitor"}
 
 
