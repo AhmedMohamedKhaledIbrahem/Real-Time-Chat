@@ -1,11 +1,10 @@
-import org.gradle.kotlin.dsl.ksp
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
+    //alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     id("kotlin-kapt")
 
@@ -59,6 +58,10 @@ android {
         compose = true
         buildConfig = true
     }
+    kapt {
+        correctErrorTypes = true
+        useBuildCache = true
+    }
 
 }
 
@@ -83,6 +86,8 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.timber)
     implementation(libs.internet.connection.monitor)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
