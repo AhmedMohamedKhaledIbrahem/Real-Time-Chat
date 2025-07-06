@@ -1,7 +1,6 @@
 package com.example.realtimechatapp.features.authentication.data.repository
 
 import com.example.internet_connection_monitor.network.InternetConnectionMonitor
-import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.error.AuthDomainError
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toDomainError
@@ -24,11 +23,22 @@ class AuthenticationRepositoryImpl(
             return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
         }
         return when (val result = remoteDataSource.signIn(email, password)) {
+            is Result.Error -> {
+                Result.Error(result.error.toDomainError())
+            }
+
             is Result.Success -> {
                 val isVerified = result.data
                 if (!isVerified) {
-                    remoteDataSource.sendEmailVerification()
-                    Result.Error(AuthDomainError.Network.EMAIL_NOT_VERIFIED)
+                    when (val verificationResult = remoteDataSource.sendEmailVerification()) {
+                        is Result.Success -> {
+                            Result.Error(AuthDomainError.Network.EMAIL_NOT_VERIFIED)
+                        }
+
+                        is Result.Error -> {
+                            Result.Error(verificationResult.error.toDomainError())
+                        }
+                    }
                 } else {
                     when (val localResult = localDataSource.activeUserByEmail(email)) {
                         is Result.Success -> {
@@ -42,10 +52,6 @@ class AuthenticationRepositoryImpl(
                 }
             }
 
-            is Result.Error -> {
-
-                Result.Error(result.error.toDomainError())
-            }
         }
     }
 
@@ -53,7 +59,7 @@ class AuthenticationRepositoryImpl(
         if (!internetConnectionMonitor.hasConnection()) {
             return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
         }
-        val signUpModel  = signUpParams.toModel()
+        val signUpModel = signUpParams.toModel()
         return when (val result = remoteDataSource.signUp(signUpModel)) {
             is Result.Success -> {
                 val uid = result.data
