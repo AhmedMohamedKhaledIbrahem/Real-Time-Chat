@@ -11,15 +11,16 @@ fun SignUpModel.toEntity(): SignUpEntity = SignUpEntity(
     password = password,
 )
 
-fun SignUpEntity.toModel(): SignUpModel = SignUpModel(
-    name = name,
-    email = email,
-    phoneNumber = phoneNumber,
-    password = password,
-)
 fun SignUpModel.toUserEntity(uid: String): UserEntity = UserEntity(
     id = uid,
     name = name,
     email = email,
     phoneNumber = phoneNumber,
 )
+fun SignUpEntity.toModel(): SignUpModel = SignUpModel(
+    name = name,
+    email = email,
+    phoneNumber = phoneNumber,
+    password = password,
+)
+
