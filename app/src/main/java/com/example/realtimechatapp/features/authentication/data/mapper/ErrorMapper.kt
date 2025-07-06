@@ -11,7 +11,9 @@ fun AuthDataError.Network.toDomainError(): AuthDomainError.Network = when (this)
     AuthDataError.Network.PERMISSION_DENIED -> AuthDomainError.Network.PERMISSION_DENIED
     AuthDataError.Network.NETWORK_UNAVAILABLE -> AuthDomainError.Network.NETWORK_UNAVAILABLE
     AuthDataError.Network.TIMEOUT -> AuthDomainError.Network.TIMEOUT
+    AuthDataError.Network.NO_USER_LOGGED_IN -> AuthDomainError.Network.NO_USER_LOGGED_IN
     AuthDataError.Network.UNKNOWN -> AuthDomainError.Network.UNKNOWN
+
 }
 fun AuthDataError.Local.toDomainError(): AuthDomainError.Local = when (this) {
     AuthDataError.Local.DATABASE_ERROR -> AuthDomainError.Local.DATABASE_ERROR
