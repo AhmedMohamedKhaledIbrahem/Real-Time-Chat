@@ -24,4 +24,5 @@ val authenticationModule = module {
     single<SignInUseCase> { SignInUseCaseImpl(get(), get()) }
     single<SignUpUseCase> { SignUpUseCaseImpl(get()) }
     single<ForgetPasswordUseCase> { ForgetPasswordUseCaseImpl(get()) }
+    viewModel { SignInViewModel(get()) }
 }
