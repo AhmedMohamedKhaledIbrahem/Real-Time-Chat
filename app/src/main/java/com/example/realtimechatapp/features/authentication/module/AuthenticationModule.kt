@@ -14,6 +14,8 @@ import com.example.realtimechatapp.features.authentication.domain.usecase.signup
 import com.example.realtimechatapp.features.authentication.domain.usecase.signup.SignUpUseCaseImpl
 import com.example.realtimechatapp.features.authentication.domain.validator.EmailValidator
 import com.example.realtimechatapp.features.authentication.domain.validator.RegexEmailValidator
+import com.example.realtimechatapp.features.authentication.presentation.controller.signin.SignInViewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val authenticationModule = module {
