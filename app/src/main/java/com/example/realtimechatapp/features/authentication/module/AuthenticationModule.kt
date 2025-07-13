@@ -12,13 +12,16 @@ import com.example.realtimechatapp.features.authentication.domain.usecase.signin
 import com.example.realtimechatapp.features.authentication.domain.usecase.signin.SignInUseCaseImpl
 import com.example.realtimechatapp.features.authentication.domain.usecase.signup.SignUpUseCase
 import com.example.realtimechatapp.features.authentication.domain.usecase.signup.SignUpUseCaseImpl
+import com.example.realtimechatapp.features.authentication.domain.validator.EmailValidator
+import com.example.realtimechatapp.features.authentication.domain.validator.RegexEmailValidator
 import org.koin.dsl.module
 
 val authenticationModule = module {
     single<AuthenticationRemoteDataSource> { AuthenticationRemoteDataSourceImpl(get()) }
     single<AuthenticationLocalDataSource> { AuthenticationLocalDataSourceImpl(get()) }
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(get(), get(), get()) }
-    single<SignInUseCase> { SignInUseCaseImpl(get()) }
+    single<EmailValidator> { RegexEmailValidator() }
+    single<SignInUseCase> { SignInUseCaseImpl(get(), get()) }
     single<SignUpUseCase> { SignUpUseCaseImpl(get()) }
     single<ForgetPasswordUseCase> { ForgetPasswordUseCaseImpl(get()) }
 }
