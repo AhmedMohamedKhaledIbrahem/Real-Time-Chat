@@ -43,6 +43,28 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
+    override suspend fun fetchUser(): Result<UserModel, AuthDataError> {
+        return try {
+            val user = firebaseInstance.firebaseAuth().currentUser
+                ?: throw FirebaseAuthException("NO_USER", "No user logged in")
+
+            val uid = user.uid
+            val userProfileAsync = firebaseInstance.firebaseDatabase()
+                .getReference(BuildConfig.DB_REFERENCE)
+                .child(uid)
+                .get()
+            val userProfile = userProfileAsync.await()
+            val userModel = userProfile.getValue(UserModel::class.java)
+                ?: throw FirebaseAuthException("NO_USER", "No user logged in")
+
+            Result.Success( userModel)
+
+        } catch (e: Exception) {
+            Result.Error(e.toRemoteDataError())
+        }
+
+    }
+
     override suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError> {
         return try {
             val result = firebaseInstance.firebaseAuth().createUserWithEmailAndPassword(
