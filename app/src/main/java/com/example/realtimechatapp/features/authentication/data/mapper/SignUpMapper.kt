@@ -25,7 +25,7 @@ fun SignUpEntity.toModel(): SignUpModel = SignUpModel(
     phoneNumber = phoneNumber,
     password = password,
 )
-fun SignUpModel.toUserProfileModel(): UserModel = UserModel(
+fun SignUpModel.toUserModel(): UserModel = UserModel(
     name = name,
     email = email,
     phone = phoneNumber,
