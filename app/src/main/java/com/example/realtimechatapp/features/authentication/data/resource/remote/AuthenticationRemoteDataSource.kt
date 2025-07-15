@@ -1,13 +1,15 @@
 package com.example.realtimechatapp.features.authentication.data.resource.remote
 
+import com.example.realtimechatapp.BuildConfig
 import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.firebase.FirebaseInstance
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toRemoteDataError
+import com.example.realtimechatapp.features.authentication.data.mapper.toUserProfileModel
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
-import kotlinx.coroutines.tasks.await
-import com.example.realtimechatapp.BuildConfig
+import com.example.realtimechatapp.features.authentication.data.model.UserModel
 import com.google.firebase.auth.FirebaseAuthException
+import kotlinx.coroutines.tasks.await
 
 interface AuthenticationRemoteDataSource {
     suspend fun signIn(
@@ -16,7 +18,7 @@ interface AuthenticationRemoteDataSource {
     ): Result<Boolean, AuthDataError>
 
     suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError>
-
+    suspend fun fetchUser(): Result<UserModel, AuthDataError>
     suspend fun forgotPassword(email: String): Result<Unit, AuthDataError>
     suspend fun sendEmailVerification(): Result<Unit, AuthDataError>
 }
@@ -30,8 +32,9 @@ class AuthenticationRemoteDataSourceImpl(
         password: String
     ): Result<Boolean, AuthDataError> {
         return try {
-            val result =
-                firebaseInstance.firebaseAuth().signInWithEmailAndPassword(email, password).await()
+            val resultAsync =
+                firebaseInstance.firebaseAuth().signInWithEmailAndPassword(email, password)
+            val result = resultAsync.await()
             val user = result.user ?: throw FirebaseAuthException(
                 "AUTH_FAILED",
                 "User creation failed"
@@ -67,17 +70,20 @@ class AuthenticationRemoteDataSourceImpl(
 
     override suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError> {
         return try {
-            val result = firebaseInstance.firebaseAuth().createUserWithEmailAndPassword(
+            val resultAsync = firebaseInstance.firebaseAuth().createUserWithEmailAndPassword(
                 signUpParams.email,
                 signUpParams.password
-            ).await()
+            )
+            val result = resultAsync.await()
             val user = result.user ?: throw FirebaseAuthException(
                 "AUTH_FAILED",
                 "User creation failed"
             )
             val uid = user.uid
-            firebaseInstance.firebaseDatabase().getReference(BuildConfig.DB_REFERENCE)
-                .child(uid).setValue(signUpParams).await()
+            val firebaseAsync =
+                firebaseInstance.firebaseDatabase().getReference(BuildConfig.DB_REFERENCE)
+                    .child(uid).setValue(signUpParams.toUserProfileModel())
+            firebaseAsync.await()
             Result.Success(uid)
         } catch (e: Exception) {
             Result.Error(e.toRemoteDataError())
