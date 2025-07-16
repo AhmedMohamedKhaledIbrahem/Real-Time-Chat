@@ -15,13 +15,17 @@ interface UserDao {
     suspend fun insertUser(userParams: UserEntity)
 
     @Query("SELECT * FROM user")
-     fun getUser(): Flow<UserEntity>
+    fun getUser(): Flow<UserEntity>
+
+    @Query("SELECT * FROM user ")
+    suspend fun isUserExist(): UserEntity?
 
     @Update
     suspend fun updateUser(user: UserEntity)
-    
+
     @Query("UPDATE user SET isVerified = 1 WHERE email = :email")
     suspend fun updateIsVerifiedByEmail(email: String)
+
     @Query("DELETE FROM user")
     suspend fun deleteUser()
 }
