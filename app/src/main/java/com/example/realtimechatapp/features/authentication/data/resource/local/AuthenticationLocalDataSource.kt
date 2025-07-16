@@ -45,6 +45,15 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
        }
     }
 
+    override suspend fun isUserExist(): Result<UserEntity?, AuthDataError.Local> {
+        return try {
+            val isUserExist = dao.isUserExist()
+            Result.Success(isUserExist)
+        } catch (e: Exception) {
+            Result.Error(e.toLocalDataError())
+        }
+    }
+
     override suspend fun deleteUser(): Result<Unit, AuthDataError.Local> {
        return try {
            dao.deleteUser()
