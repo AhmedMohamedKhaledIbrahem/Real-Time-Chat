@@ -20,6 +20,7 @@ fun Exception.toRemoteDataError(): AuthDataError = when (this) {
         when(this.errorCode){
             "AUTH_FAILED" -> AuthDataError.Network.AUTH_FAILED
             "NO_USER" -> AuthDataError.Network.NO_USER_LOGGED_IN
+            "NO_USER_DATA_FOUND" -> AuthDataError.Network.NO_USER_DATA_FOUND
             else -> AuthDataError.Network.UNKNOWN
         }
     }
