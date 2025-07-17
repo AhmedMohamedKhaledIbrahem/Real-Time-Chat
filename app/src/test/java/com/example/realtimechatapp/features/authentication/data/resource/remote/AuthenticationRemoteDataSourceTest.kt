@@ -1,25 +1,33 @@
 package com.example.realtimechatapp.features.authentication.data.resource.remote
 
+import com.example.realtimechatapp.BuildConfig
 import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.firebase.FirebaseInstance
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
+import com.example.realtimechatapp.features.authentication.data.model.UserModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.example.realtimechatapp.BuildConfig
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import io.mockk.*
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import io.mockk.clearAllMocks
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 
 class AuthenticationRemoteDataSourceTest {
 
@@ -30,6 +38,8 @@ class AuthenticationRemoteDataSourceTest {
     val userReference = mockk<DatabaseReference>(relaxed = true)
     private val authResult: AuthResult = mockk()
     private val firebaseUser: FirebaseUser = mockk()
+
+    private val dataSnapshot = mockk<DataSnapshot>()
     private lateinit var authenticationRemoteDataSource: AuthenticationRemoteDataSource
 
     @Before
@@ -56,6 +66,8 @@ class AuthenticationRemoteDataSourceTest {
             password = "password123"
         )
     }
+
+    private fun mockUserModel(): UserModel = mockk()
 
     // Test signIn method - Success case with verified email
     @Test
@@ -144,6 +156,64 @@ class AuthenticationRemoteDataSourceTest {
         }
     }
 
+    @Test
+    fun `fetchUser should return Success with Pair UserModel And String when user exists`() {
+        runBlocking {
+            // Given
+            val mockUserModel = mockUserModel()
+            every { firebaseAuth.currentUser } returns firebaseUser
+            every { firebaseUser.uid } returns UID
+            every { firebaseDatabase.getReference(BuildConfig.DB_REFERENCE) } returns databaseReference
+            every { databaseReference.child(UID) } returns userReference
+            coEvery { userReference.get() } returns Tasks.forResult(dataSnapshot)
+            every { dataSnapshot.getValue(UserModel::class.java) } returns mockUserModel
+
+            // When
+            val result = authenticationRemoteDataSource.fetchUser()
+            //Then
+            assertTrue(result is Result.Success)
+            val (userModel, uid) = (result as Result.Success).data
+            assertEquals(mockUserModel, userModel)
+            assertEquals(UID, uid)
+        }
+    }
+
+    @Test
+    fun `fetchUser should return Error  when user is not logged in`() {
+        runBlocking {
+            // Given
+            val firebaseAuthException = mockk<FirebaseAuthException> {
+                every { errorCode } returns NO_USER_ERROR
+            }
+            every { firebaseAuth.currentUser } throws firebaseAuthException
+            // When
+            val result = authenticationRemoteDataSource.fetchUser()
+            // Then
+            assertTrue(result is Result.Error)
+            assertEquals(AuthDataError.Network.NO_USER_LOGGED_IN, (result as Result.Error).error)
+        }
+    }
+
+    @Test
+    fun `fetchUser should return Error when the dataSnapshot(UserModel) is null`() {
+        runBlocking {
+            // Given
+            val firebaseAuthException = mockk<FirebaseAuthException> {
+                every { errorCode } returns NO_USER_DATA_FOUND
+            }
+            every { firebaseAuth.currentUser } returns firebaseUser
+            every { firebaseUser.uid } returns UID
+            every { firebaseDatabase.getReference(BuildConfig.DB_REFERENCE) } returns databaseReference
+            every { databaseReference.child(UID) } returns userReference
+            coEvery { userReference.get() } returns Tasks.forResult(dataSnapshot)
+            every { dataSnapshot.getValue(UserModel::class.java) } throws firebaseAuthException
+            // When
+            val result = authenticationRemoteDataSource.fetchUser()
+            // Then
+            assertTrue(result is Result.Error)
+            assertEquals(AuthDataError.Network.NO_USER_DATA_FOUND, (result as Result.Error).error)
+        }
+    }
 
     //    // Test signUp method - Success case
     @Test
@@ -160,7 +230,7 @@ class AuthenticationRemoteDataSourceTest {
             every { firebaseUser.uid } returns UID
             every { firebaseDatabase.getReference(BuildConfig.DB_REFERENCE) } returns databaseReference
             every { databaseReference.child(UID) } returns userReference
-            every { userReference.setValue(mockSignUpModel()) } returns Tasks.forResult(null as Void?)
+            every { userReference.setValue(any()) } returns Tasks.forResult(null)
 
             // When
             val result = authenticationRemoteDataSource.signUp(mockSignUpModel())
@@ -300,6 +370,7 @@ class AuthenticationRemoteDataSourceTest {
 
     companion object {
         private const val AUTH_FAILED_ERROR = "AUTH_FAILED"
+        private const val NO_USER_DATA_FOUND = "NO_USER_DATA_FOUND"
         private const val NO_USER_ERROR = "NO_USER"
         private const val UID = "UID_123_TEST"
     }
