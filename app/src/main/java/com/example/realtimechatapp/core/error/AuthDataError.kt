@@ -8,6 +8,7 @@ sealed interface AuthDataError: Error {
         EMAIL_NOT_VERIFIED,
         NO_USER_LOGGED_IN,
         PERMISSION_DENIED,
+        NO_USER_DATA_FOUND,
         NETWORK_UNAVAILABLE,
         TIMEOUT,
         UNKNOWN,

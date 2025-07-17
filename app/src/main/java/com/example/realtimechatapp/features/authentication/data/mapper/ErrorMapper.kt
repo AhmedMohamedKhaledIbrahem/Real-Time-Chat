@@ -12,6 +12,7 @@ fun AuthDataError.Network.toDomainError(): AuthDomainError.Network = when (this)
     AuthDataError.Network.NETWORK_UNAVAILABLE -> AuthDomainError.Network.NETWORK_UNAVAILABLE
     AuthDataError.Network.TIMEOUT -> AuthDomainError.Network.TIMEOUT
     AuthDataError.Network.NO_USER_LOGGED_IN -> AuthDomainError.Network.NO_USER_LOGGED_IN
+    AuthDataError.Network.NO_USER_DATA_FOUND -> AuthDomainError.Network.NO_USER_DATA_FOUND
     AuthDataError.Network.UNKNOWN -> AuthDomainError.Network.UNKNOWN
 
 }

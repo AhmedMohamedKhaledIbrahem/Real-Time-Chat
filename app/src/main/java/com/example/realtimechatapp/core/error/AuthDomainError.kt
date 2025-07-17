@@ -9,6 +9,7 @@ sealed interface AuthDomainError : Error {
         EMAIL_NOT_VERIFIED,
         PERMISSION_DENIED,
         NETWORK_UNAVAILABLE,
+        NO_USER_DATA_FOUND,
         INVALID_SIGN_UP_PARAMS,
         INVALID_LOGIN_PARAMS,
         INVALID_EMAIL,
