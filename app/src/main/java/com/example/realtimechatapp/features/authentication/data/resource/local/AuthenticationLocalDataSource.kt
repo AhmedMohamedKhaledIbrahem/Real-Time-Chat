@@ -16,6 +16,7 @@ interface AuthenticationLocalDataSource {
     ): Result<Unit, AuthDataError.Local>
 
     suspend fun getUser(): Result<Flow<UserEntity>, AuthDataError.Local>
+    suspend fun isUserExist(): Result<UserEntity?, AuthDataError.Local>
     suspend fun deleteUser(): Result<Unit, AuthDataError.Local>
     suspend fun updateUser(userParams: UserEntity): Result<Unit, AuthDataError.Local>
 
@@ -37,12 +38,12 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
     }
 
     override suspend fun getUser(): Result<Flow<UserEntity>, AuthDataError.Local> {
-       return  try {
-           val user = dao.getUser()
-           Result.Success(user)
-       }catch (e: Exception){
-           Result.Error(e.toLocalDataError())
-       }
+        return try {
+            val user = dao.getUser()
+            Result.Success(user)
+        } catch (e: Exception) {
+            Result.Error(e.toLocalDataError())
+        }
     }
 
     override suspend fun isUserExist(): Result<UserEntity?, AuthDataError.Local> {
@@ -55,19 +56,19 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
     }
 
     override suspend fun deleteUser(): Result<Unit, AuthDataError.Local> {
-       return try {
-           dao.deleteUser()
-           Result.Success(Unit)
-       }catch (e: Exception){
-           Result.Error(e.toLocalDataError())
-       }
+        return try {
+            dao.deleteUser()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            Result.Error(e.toLocalDataError())
+        }
     }
 
     override suspend fun updateUser(userParams: UserEntity): Result<Unit, AuthDataError.Local> {
         return try {
             dao.updateUser(userParams)
             Result.Success(Unit)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Result.Error(e.toLocalDataError())
         }
     }
@@ -76,7 +77,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
         return try {
             dao.updateIsVerifiedByEmail(email)
             Result.Success(Unit)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Result.Error(e.toLocalDataError())
         }
     }
