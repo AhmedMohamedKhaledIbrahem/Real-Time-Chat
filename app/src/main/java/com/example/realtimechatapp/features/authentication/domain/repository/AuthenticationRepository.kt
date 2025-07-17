@@ -7,6 +7,9 @@ import com.example.realtimechatapp.features.authentication.domain.entity.SignUpE
 
 interface AuthenticationRepository {
     suspend fun signIn(email:String , password:String): Result<Unit, AuthDomainError>
+    suspend fun sendVerificationEmail(isVerified:Boolean): Result<Unit, AuthDomainError>
+    suspend fun saveUser(isVerified: Boolean): Result<Unit, AuthDomainError>
+    suspend fun activeUserByEmail(email: String): Result<Unit, AuthDomainError>
     suspend fun signUp(signUpParams: SignUpEntity): Result<Unit, AuthDomainError>
     suspend fun forgotPassword(email:String): Result<Unit, AuthDomainError>
 }
