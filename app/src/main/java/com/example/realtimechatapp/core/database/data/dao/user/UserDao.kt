@@ -23,7 +23,7 @@ interface UserDao {
     @Update
     suspend fun updateUser(user: UserEntity)
 
-    @Query("UPDATE user SET isVerified = 1 WHERE email = :email")
+    @Query("UPDATE user SET isVerified = 1 WHERE email = :email And isVerified = 0")
     suspend fun updateIsVerifiedByEmail(email: String)
 
     @Query("DELETE FROM user")
