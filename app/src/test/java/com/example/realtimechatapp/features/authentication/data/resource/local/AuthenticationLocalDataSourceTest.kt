@@ -227,6 +227,47 @@ class AuthenticationLocalDataSourceTest {
             assertEquals(AuthDataError.Local.READ_FAILED, (result as Result.Error).error)
         }
     }
+    @Test
+    fun `isUserExist should return success when dao returns user entity`(){
+        runBlocking {
+            // Given
+            val userEntity = mockk<UserEntity>()
+            coEvery { userDao.isUserExist() } returns userEntity
+            // When
+            val result = authenticationLocalDataSource.isUserExist()
+
+            // Then
+            assertTrue(result is Result.Success)
+            assertEquals(userEntity, (result as Result.Success).data)
+        }
+    }
+    @Test
+    fun `isUserExist should return success when dao returns user entity is null`(){
+        runBlocking {
+            // Given
+            coEvery { userDao.isUserExist() } returns null
+            // When
+            val result = authenticationLocalDataSource.isUserExist()
+
+            // Then
+            assertTrue(result is Result.Success)
+            assertNull((result as Result.Success).data)
+        }
+    }
+    @Test
+    fun`isUserExist should return error when dao throws exception`(){
+        runBlocking {
+            // Given
+            val exception = SQLiteException()
+            coEvery { userDao.isUserExist() } throws exception
+            // When
+            val result = authenticationLocalDataSource.isUserExist()
+
+            // Then
+            assertTrue(result is Result.Error)
+            assertEquals(AuthDataError.Local.DATABASE_ERROR, (result as Result.Error).error)
+        }
+    }
 
     companion object {
         private const val PATH_SIGN_UP_MAPPER =
