@@ -5,7 +5,7 @@ import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.firebase.FirebaseInstance
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toRemoteDataError
-import com.example.realtimechatapp.features.authentication.data.mapper.toUserProfileModel
+import com.example.realtimechatapp.features.authentication.data.mapper.toUserModel
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
 import com.example.realtimechatapp.features.authentication.data.model.UserModel
 import com.google.firebase.auth.FirebaseAuthException
@@ -18,7 +18,7 @@ interface AuthenticationRemoteDataSource {
     ): Result<Boolean, AuthDataError>
 
     suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError>
-    suspend fun fetchUser(): Result<UserModel, AuthDataError>
+    suspend fun fetchUser(): Result<Pair<UserModel, String>, AuthDataError>
     suspend fun forgotPassword(email: String): Result<Unit, AuthDataError>
     suspend fun sendEmailVerification(): Result<Unit, AuthDataError>
 }
@@ -46,7 +46,7 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun fetchUser(): Result<UserModel, AuthDataError> {
+    override suspend fun fetchUser(): Result<Pair<UserModel, String>, AuthDataError> {
         return try {
             val user = firebaseInstance.firebaseAuth().currentUser
                 ?: throw FirebaseAuthException("NO_USER", "No user logged in")
@@ -58,9 +58,9 @@ class AuthenticationRemoteDataSourceImpl(
                 .get()
             val userProfile = userProfileAsync.await()
             val userModel = userProfile.getValue(UserModel::class.java)
-                ?: throw FirebaseAuthException("NO_USER", "No user logged in")
+                ?: throw FirebaseAuthException("NO_USER_DATA_FOUND", "No user data found")
 
-            Result.Success( userModel)
+            Result.Success(Pair(userModel, uid))
 
         } catch (e: Exception) {
             Result.Error(e.toRemoteDataError())
@@ -82,7 +82,7 @@ class AuthenticationRemoteDataSourceImpl(
             val uid = user.uid
             val firebaseAsync =
                 firebaseInstance.firebaseDatabase().getReference(BuildConfig.DB_REFERENCE)
-                    .child(uid).setValue(signUpParams.toUserProfileModel())
+                    .child(uid).setValue(signUpParams.toUserModel())
             firebaseAsync.await()
             Result.Success(uid)
         } catch (e: Exception) {
