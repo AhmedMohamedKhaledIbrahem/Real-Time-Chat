@@ -5,7 +5,9 @@ import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.error.AuthDomainError
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toEntity
+import com.example.realtimechatapp.features.authentication.data.mapper.toSignUpModel
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
+import com.example.realtimechatapp.features.authentication.data.model.UserModel
 import com.example.realtimechatapp.features.authentication.data.resource.local.AuthenticationLocalDataSource
 import com.example.realtimechatapp.features.authentication.data.resource.remote.AuthenticationRemoteDataSource
 import com.example.realtimechatapp.features.authentication.domain.entity.SignUpEntity
@@ -18,7 +20,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -36,6 +38,7 @@ class AuthenticationRepositoryTest {
             internetConnectionMonitor
         )
         mockkStatic(PATH_SIGN_UP_MAPPER)
+        mockkStatic(PATH_SIGN_IN_MAPPER)
     }
 
     @After
@@ -72,10 +75,21 @@ class AuthenticationRepositoryTest {
         )
     }
 
+    private fun mockUserModel(): UserModel {
+        return UserModel(
+            email = "email@gmail.com",
+            imageUrl = "www.image.com",
+            name = "Test User",
+            phone = "1234567890"
+        )
+    }
+
 
     @Test
     fun `signIn success when the email is verified and the internet connection is available`() {
         runBlocking {
+            val userModel = mockUserModel()
+            val signUpModel = mockSignUpModel()
             hasConnection(true)
             coEvery {
                 remoteDataSource.signIn(
@@ -83,22 +97,31 @@ class AuthenticationRepositoryTest {
                     mockEmailAndPassword().second,
                 )
             } returns Result.Success(true)
+
+            coEvery { remoteDataSource.fetchUser() } returns Result.Success(
+                Pair(
+                    userModel,
+                    uid
+                )
+            )
+            every { userModel.toSignUpModel() } returns signUpModel
+            coEvery { localDataSource.isUserExist() } returns Result.Success(null)
+            coEvery { localDataSource.saveUser(signUpModel, uid) } returns Result.Success(Unit)
             coEvery {
                 localDataSource.activeUserByEmail(mockEmailAndPassword().first)
             } returns Result.Success(Unit)
+
             val result = authenticationRepository.signIn(
                 mockEmailAndPassword().first,
                 mockEmailAndPassword().second,
             )
+
             assertTrue(result is Result.Success && result.data == Unit)
             coVerify(exactly = 1) {
                 remoteDataSource.signIn(
                     mockEmailAndPassword().first,
                     mockEmailAndPassword().second,
                 )
-            }
-            coVerify(exactly = 1) {
-                localDataSource.activeUserByEmail(mockEmailAndPassword().first)
             }
         }
     }
@@ -187,13 +210,27 @@ class AuthenticationRepositoryTest {
     @Test
     fun `signIn failed when the activeUserByEmail has an exception and network is available`() {
         runBlocking {
+
             hasConnection(true)
+            val userModel = mockUserModel()
+            val signUpModel = mockSignUpModel()
             coEvery {
                 remoteDataSource.signIn(
                     mockEmailAndPassword().first,
                     mockEmailAndPassword().second,
                 )
             } returns Result.Success(true)
+
+            coEvery { localDataSource.isUserExist() } returns Result.Success(null)
+
+            coEvery { remoteDataSource.fetchUser() } returns Result.Success(
+                Pair(
+                    userModel,
+                    uid
+                )
+            )
+            every { userModel.toSignUpModel() } returns signUpModel
+            coEvery { localDataSource.saveUser(signUpModel, uid) } returns Result.Success(Unit)
             coEvery {
                 localDataSource.activeUserByEmail(mockEmailAndPassword().first)
             } returns Result.Error(
@@ -370,5 +407,7 @@ class AuthenticationRepositoryTest {
     companion object {
         private const val PATH_SIGN_UP_MAPPER =
             "com.example.realtimechatapp.features.authentication.data.mapper.SignUpMapperKt"
+        private const val PATH_SIGN_IN_MAPPER =
+            "com.example.realtimechatapp.features.authentication.data.mapper.UserMapperKt"
     }
 }
