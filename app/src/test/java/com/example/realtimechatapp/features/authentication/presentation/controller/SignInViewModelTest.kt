@@ -6,7 +6,7 @@ import com.example.realtimechatapp.core.event.UiEvent
 import com.example.realtimechatapp.core.ui_text.UiText
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.MainDispatcherRule
-import com.example.realtimechatapp.features.activeTestChannelEvent
+import com.example.realtimechatapp.features.collectEvent
 import com.example.realtimechatapp.features.activeTestFLow
 import com.example.realtimechatapp.features.authentication.domain.usecase.signin.SignInUseCase
 import com.example.realtimechatapp.features.authentication.presentation.controller.signin.SignInViewModel
@@ -77,7 +77,7 @@ class SignInViewModelTest {
         runTest {
             val events = mutableListOf<UiEvent>()
             val channelEventAsync = async {
-                activeTestChannelEvent(
+                collectEvent(
                     flow = viewModel.signInEvent,
                     events = events,
                 )
@@ -93,7 +93,7 @@ class SignInViewModelTest {
         runTest {
             val events = mutableListOf<UiEvent>()
             val channelEventAsync = async {
-                activeTestChannelEvent(
+                collectEvent(
                     flow = viewModel.signInEvent,
                     events = events,
                 )
