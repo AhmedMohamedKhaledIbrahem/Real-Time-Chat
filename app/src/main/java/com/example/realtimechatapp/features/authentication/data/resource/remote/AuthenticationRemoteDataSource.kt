@@ -3,6 +3,7 @@ package com.example.realtimechatapp.features.authentication.data.resource.remote
 import com.example.realtimechatapp.BuildConfig
 import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.firebase.FirebaseInstance
+import com.example.realtimechatapp.core.logger.Logger
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toRemoteDataError
 import com.example.realtimechatapp.features.authentication.data.mapper.toUserModel
@@ -24,8 +25,9 @@ interface AuthenticationRemoteDataSource {
 }
 
 class AuthenticationRemoteDataSourceImpl(
-    private val firebaseInstance: FirebaseInstance
-) : AuthenticationRemoteDataSource {
+    private val firebaseInstance: FirebaseInstance,
+    logger: Logger
+) : AuthenticationRemoteDataSource, Logger by logger {
 
     override suspend fun signIn(
         email: String,
@@ -35,12 +37,22 @@ class AuthenticationRemoteDataSourceImpl(
             val resultAsync =
                 firebaseInstance.firebaseAuth().signInWithEmailAndPassword(email, password)
             val result = resultAsync.await()
-            val user = result.user ?: throw FirebaseAuthException(
-                "AUTH_FAILED",
-                "User creation failed"
-            )
+            val user = result.user ?: run {
+                e(
+                    FirebaseAuthException(
+                        AUTH_FAILED_ERROR_CODE,
+                        USER_CREATION_MESSAGE
+                    ),
+                    USER_IS_NULL_MESSAGE
+                )
+                throw FirebaseAuthException(
+                    AUTH_FAILED_ERROR_CODE,
+                    USER_CREATION_MESSAGE
+                )
+            }
             Result.Success(user.isEmailVerified)
         } catch (e: Exception) {
+            e(e, "Error signing in")
             Result.Error(e.toRemoteDataError())
 
         }
@@ -49,7 +61,19 @@ class AuthenticationRemoteDataSourceImpl(
     override suspend fun fetchUser(): Result<Pair<UserModel, String>, AuthDataError> {
         return try {
             val user = firebaseInstance.firebaseAuth().currentUser
-                ?: throw FirebaseAuthException("NO_USER", "No user logged in")
+                ?: run {
+                    e(
+                        FirebaseAuthException(
+                            NO_USER_ERROR_CODE,
+                            NO_USER_LOGGED_IN_MESSAGE
+                        ),
+                        NO_USER_LOGGED_IN_MESSAGE
+                    )
+                    throw FirebaseAuthException(
+                        NO_USER_ERROR_CODE,
+                        NO_USER_LOGGED_IN_MESSAGE
+                    )
+                }
 
             val uid = user.uid
             val userProfileAsync = firebaseInstance.firebaseDatabase()
@@ -58,11 +82,24 @@ class AuthenticationRemoteDataSourceImpl(
                 .get()
             val userProfile = userProfileAsync.await()
             val userModel = userProfile.getValue(UserModel::class.java)
-                ?: throw FirebaseAuthException("NO_USER_DATA_FOUND", "No user data found")
+                ?: run {
+                    e(
+                        FirebaseAuthException(
+                            NO_USER_DATA_FOUND_CODE,
+                            NO_USER_DATA_FOUND_MESSAGE
+                        ),
+                        NO_USER_DATA_FOUND_MESSAGE
+                    )
+                    throw FirebaseAuthException(
+                        NO_USER_DATA_FOUND_CODE ,
+                        NO_USER_DATA_FOUND_MESSAGE
+                    )
+                }
 
             Result.Success(Pair(userModel, uid))
 
         } catch (e: Exception) {
+            e(e, "Error fetching user")
             Result.Error(e.toRemoteDataError())
         }
 
@@ -76,8 +113,8 @@ class AuthenticationRemoteDataSourceImpl(
             )
             val result = resultAsync.await()
             val user = result.user ?: throw FirebaseAuthException(
-                "AUTH_FAILED",
-                "User creation failed"
+                AUTH_FAILED_ERROR_CODE,
+                USER_CREATION_MESSAGE
             )
             val uid = user.uid
             val firebaseAsync =
@@ -86,6 +123,7 @@ class AuthenticationRemoteDataSourceImpl(
             firebaseAsync.await()
             Result.Success(uid)
         } catch (e: Exception) {
+            e(e, "Error signing up")
             Result.Error(e.toRemoteDataError())
         }
     }
@@ -95,6 +133,7 @@ class AuthenticationRemoteDataSourceImpl(
             firebaseInstance.firebaseAuth().sendPasswordResetEmail(email).await()
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(e, "Error sending password reset email")
             Result.Error(e.toRemoteDataError())
         }
     }
@@ -102,12 +141,26 @@ class AuthenticationRemoteDataSourceImpl(
     override suspend fun sendEmailVerification(): Result<Unit, AuthDataError> {
         return try {
             val user = firebaseInstance.firebaseAuth().currentUser
-                ?: throw FirebaseAuthException("NO_USER", "No user logged in")
+                ?: throw FirebaseAuthException(
+                    NO_USER_ERROR_CODE,
+                    NO_USER_LOGGED_IN_MESSAGE
+                )
             user.sendEmailVerification().await()
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(e, "Error sending email verification")
             Result.Error(e.toRemoteDataError())
         }
+    }
+
+    companion object {
+        private const val NO_USER_DATA_FOUND_MESSAGE = "no user data found"
+        private const val NO_USER_LOGGED_IN_MESSAGE = "no user logged in"
+        private const val USER_CREATION_MESSAGE = "user creation failed"
+        private  const val USER_IS_NULL_MESSAGE = "User is null after sign-in"
+        private const val NO_USER_ERROR_CODE = "NO_USER"
+        private const val AUTH_FAILED_ERROR_CODE = "AUTH_FAILED"
+        private const val NO_USER_DATA_FOUND_CODE = "NO_USER_DATA_FOUND"
     }
 
 }
