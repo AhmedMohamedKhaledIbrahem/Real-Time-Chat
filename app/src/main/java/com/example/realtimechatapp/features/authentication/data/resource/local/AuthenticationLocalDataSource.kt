@@ -3,6 +3,7 @@ package com.example.realtimechatapp.features.authentication.data.resource.local
 import com.example.realtimechatapp.core.database.data.dao.user.UserDao
 import com.example.realtimechatapp.core.database.data.entity.user.UserEntity
 import com.example.realtimechatapp.core.error.AuthDataError
+import com.example.realtimechatapp.core.logger.Logger
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toLocalDataError
 import com.example.realtimechatapp.features.authentication.data.mapper.toUserEntity
@@ -23,7 +24,10 @@ interface AuthenticationLocalDataSource {
     suspend fun activeUserByEmail(email: String): Result<Unit, AuthDataError.Local>
 }
 
-class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : AuthenticationLocalDataSource {
+class AuthenticationLocalDataSourceImpl(
+    private val dao: UserDao,
+    logger: Logger
+) : AuthenticationLocalDataSource , Logger by logger {
     override suspend fun saveUser(
         userParams: SignUpModel,
         uid: String
@@ -33,6 +37,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             dao.insertUser(userEntity)
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error saving user")
             Result.Error(e.toLocalDataError())
         }
     }
@@ -42,6 +47,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             val user = dao.getUser()
             Result.Success(user)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error getting user")
             Result.Error(e.toLocalDataError())
         }
     }
@@ -51,6 +57,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             val isUserExist = dao.isUserExist()
             Result.Success(isUserExist)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error checking if user exist")
             Result.Error(e.toLocalDataError())
         }
     }
@@ -60,6 +67,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             dao.deleteUser()
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error deleting user")
             Result.Error(e.toLocalDataError())
         }
     }
@@ -69,6 +77,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             dao.updateUser(userParams)
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error updating user")
             Result.Error(e.toLocalDataError())
         }
     }
@@ -78,6 +87,7 @@ class AuthenticationLocalDataSourceImpl(private val dao: UserDao) : Authenticati
             dao.updateIsVerifiedByEmail(email)
             Result.Success(Unit)
         } catch (e: Exception) {
+            e(throwable = e , message = "Error activating user by email")
             Result.Error(e.toLocalDataError())
         }
     }

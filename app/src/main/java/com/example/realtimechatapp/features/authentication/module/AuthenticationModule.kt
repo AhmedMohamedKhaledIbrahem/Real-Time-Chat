@@ -20,7 +20,7 @@ import org.koin.dsl.module
 
 val authenticationModule = module {
     single<AuthenticationRemoteDataSource> { AuthenticationRemoteDataSourceImpl(get()) }
-    single<AuthenticationLocalDataSource> { AuthenticationLocalDataSourceImpl(get()) }
+    single<AuthenticationLocalDataSource> { AuthenticationLocalDataSourceImpl(get(),get()) }
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(get(), get(), get()) }
     single<EmailValidator> { RegexEmailValidator() }
     single<SignInUseCase> { SignInUseCaseImpl(get(), get()) }
