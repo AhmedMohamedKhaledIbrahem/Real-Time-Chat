@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteException
 import com.example.realtimechatapp.core.database.data.dao.user.UserDao
 import com.example.realtimechatapp.core.database.data.entity.user.UserEntity
 import com.example.realtimechatapp.core.error.AuthDataError
+import com.example.realtimechatapp.core.logger.Logger
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.mapper.toUserEntity
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
@@ -19,12 +20,14 @@ import java.io.IOException
 class AuthenticationLocalDataSourceTest {
 
     private lateinit var userDao: UserDao
+    private val logger = mockk<Logger>()
     private lateinit var authenticationLocalDataSource: AuthenticationLocalDataSource
 
     @Before
     fun setUp() {
         userDao = mockk()
-        authenticationLocalDataSource = AuthenticationLocalDataSourceImpl(userDao)
+
+        authenticationLocalDataSource = AuthenticationLocalDataSourceImpl(userDao,logger)
         mockkStatic(PATH_SIGN_UP_MAPPER)
     }
 
@@ -74,7 +77,7 @@ class AuthenticationLocalDataSourceTest {
             val userEntity = mockk<UserEntity>()
             val exception = SQLiteException("Database error")
 
-
+            every { logger.e(any(),any()) } returns Unit
             every { signUpModel.toUserEntity(uid) } returns userEntity
             coEvery { userDao.insertUser(userEntity) } throws exception
 
@@ -114,6 +117,7 @@ class AuthenticationLocalDataSourceTest {
         runBlocking {
             // Given
             val exception = IOException("Read failed")
+            every { logger.e(any(),any()) } returns Unit
             coEvery { userDao.getUser() } throws exception
 
             // When
@@ -147,6 +151,7 @@ class AuthenticationLocalDataSourceTest {
         runBlocking {
             // Given
             val exception = SQLiteException("Database error")
+            every { logger.e(any(),any()) } returns Unit
             coEvery { userDao.deleteUser() } throws exception
 
             // When
@@ -182,6 +187,7 @@ class AuthenticationLocalDataSourceTest {
             // Given
             val userEntity = mockk<UserEntity>()
             val exception = SQLiteException("Database error")
+            every { logger.e(any(),any()) } returns Unit
             coEvery { userDao.updateUser(userEntity) } throws exception
 
             // When
@@ -217,6 +223,7 @@ class AuthenticationLocalDataSourceTest {
             // Given
             val email = "test@example.com"
             val exception = IOException("Read failed")
+            every { logger.e(any(),any()) } returns Unit
             coEvery { userDao.updateIsVerifiedByEmail(email) } throws exception
 
             // When
@@ -259,6 +266,7 @@ class AuthenticationLocalDataSourceTest {
         runBlocking {
             // Given
             val exception = SQLiteException()
+            every { logger.e(any(),any()) } returns Unit
             coEvery { userDao.isUserExist() } throws exception
             // When
             val result = authenticationLocalDataSource.isUserExist()
