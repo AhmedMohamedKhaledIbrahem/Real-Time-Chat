@@ -3,6 +3,7 @@ package com.example.realtimechatapp.features.authentication.data.resource.remote
 import com.example.realtimechatapp.BuildConfig
 import com.example.realtimechatapp.core.error.AuthDataError
 import com.example.realtimechatapp.core.firebase.FirebaseInstance
+import com.example.realtimechatapp.core.logger.Logger
 import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.data.model.SignUpModel
 import com.example.realtimechatapp.features.authentication.data.model.UserModel
@@ -31,6 +32,7 @@ import org.junit.Test
 
 class AuthenticationRemoteDataSourceTest {
 
+    private val logger = mockk<Logger>()
     private val firebaseInstance: FirebaseInstance = mockk()
     private val firebaseAuth: FirebaseAuth = mockk()
     private val firebaseDatabase: FirebaseDatabase = mockk()
@@ -44,7 +46,8 @@ class AuthenticationRemoteDataSourceTest {
 
     @Before
     fun setUp() {
-        authenticationRemoteDataSource = AuthenticationRemoteDataSourceImpl(firebaseInstance)
+        authenticationRemoteDataSource =
+            AuthenticationRemoteDataSourceImpl(firebaseInstance, logger)
         every { firebaseInstance.firebaseAuth() } returns firebaseAuth
         every { firebaseInstance.firebaseDatabase() } returns firebaseDatabase
     }
@@ -136,6 +139,7 @@ class AuthenticationRemoteDataSourceTest {
             val firebaseAuthException = mockk<FirebaseAuthException> {
                 every { errorCode } returns AUTH_FAILED_ERROR
             }
+            every { logger.e(any(),any()) } returns Unit
             coEvery {
                 firebaseAuth.signInWithEmailAndPassword(
                     mockEmailAndPassword().first,
@@ -185,6 +189,7 @@ class AuthenticationRemoteDataSourceTest {
             val firebaseAuthException = mockk<FirebaseAuthException> {
                 every { errorCode } returns NO_USER_ERROR
             }
+            every { logger.e(any(),any()) } returns Unit
             every { firebaseAuth.currentUser } throws firebaseAuthException
             // When
             val result = authenticationRemoteDataSource.fetchUser()
@@ -201,6 +206,7 @@ class AuthenticationRemoteDataSourceTest {
             val firebaseAuthException = mockk<FirebaseAuthException> {
                 every { errorCode } returns NO_USER_DATA_FOUND
             }
+            every { logger.e(any(),any()) } returns Unit
             every { firebaseAuth.currentUser } returns firebaseUser
             every { firebaseUser.uid } returns UID
             every { firebaseDatabase.getReference(BuildConfig.DB_REFERENCE) } returns databaseReference
@@ -253,6 +259,7 @@ class AuthenticationRemoteDataSourceTest {
             val firebaseAuthException = mockk<FirebaseAuthException> {
                 every { errorCode } returns AUTH_FAILED_ERROR
             }
+            every { logger.e(any(),any()) } returns Unit
             every {
                 firebaseAuth.createUserWithEmailAndPassword(
                     mockSignUpModel().email,
@@ -276,6 +283,7 @@ class AuthenticationRemoteDataSourceTest {
         runBlocking {
             // Given
             val exception = mockk<FirebaseAuthUserCollisionException>()
+            every { logger.e(any(),any()) } returns Unit
             every {
                 firebaseAuth.createUserWithEmailAndPassword(
                     mockSignUpModel().email,
@@ -318,6 +326,7 @@ class AuthenticationRemoteDataSourceTest {
             // Given
             val email = "nonexistent@example.com"
             val exception = mockk<FirebaseAuthInvalidUserException>()
+            every { logger.e(any(),any()) } returns Unit
             every {
                 firebaseAuth.sendPasswordResetEmail(email)
             } returns Tasks.forException(exception)
@@ -357,6 +366,7 @@ class AuthenticationRemoteDataSourceTest {
             val exception = mockk<FirebaseAuthException> {
                 every { errorCode } returns NO_USER_ERROR
             }
+            every { logger.e(any(),any()) } returns Unit
             every { firebaseAuth.currentUser } throws exception
 
             // When
