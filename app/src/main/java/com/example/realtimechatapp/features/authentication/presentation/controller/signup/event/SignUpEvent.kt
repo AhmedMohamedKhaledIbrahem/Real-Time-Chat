@@ -1,4 +1,14 @@
 package com.example.realtimechatapp.features.authentication.presentation.controller.signup.event
 
-interface SignUpEvent {
+sealed interface SignUpEvent {
+    sealed interface Click: SignUpEvent {
+       data object SignUp: Click
+       data object SignIn: Click
+    }
+    sealed interface Input: SignUpEvent {
+        data class Name(val name: String): Input
+        data class Email(val email: String): Input
+        data class Phone(val phone: String): Input
+        data class Password(val password: String): Input
+    }
 }
