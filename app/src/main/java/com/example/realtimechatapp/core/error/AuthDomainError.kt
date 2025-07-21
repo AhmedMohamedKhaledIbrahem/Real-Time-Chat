@@ -23,4 +23,22 @@ sealed interface AuthDomainError : Error {
         READ_FAILED,
         UNKNOWN
     }
+
+    enum class Password:AuthDomainError{
+        TOO_SHORT,
+        NO_DIGIT,
+        NO_SPECIAL_CHARACTER,
+        NO_UPPERCASE,
+        NO_LOWERCASE,
+    }
+    enum class Email:AuthDomainError{
+        INVALID_EMAIL,
+    }
+    enum class Name:AuthDomainError{
+        INVALID_NAME,
+    }
+    enum class Phone:AuthDomainError{
+        INVALID_PHONE,
+    }
+
 }
