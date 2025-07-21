@@ -56,5 +56,31 @@ fun AuthDomainError.asUiText(): UiText {
 
         AuthDomainError.Network.NO_USER_DATA_FOUND ->
             StringResource(R.string.error_no_user_data_found)
+
+        AuthDomainError.Name.INVALID_NAME ->
+            StringResource(R.string.error_invalid_name)
+
+        AuthDomainError.Email.INVALID_EMAIL ->
+            StringResource(R.string.error_invalid_email)
+
+        AuthDomainError.Phone.INVALID_PHONE ->
+            StringResource(R.string.error_invalid_phone)
+
+        AuthDomainError.Password.TOO_SHORT ->
+            StringResource(R.string.error_password_too_short)
+
+        AuthDomainError.Password.NO_DIGIT ->
+            StringResource(R.string.error_password_no_digit)
+
+        AuthDomainError.Password.NO_SPECIAL_CHARACTER ->
+            StringResource(R.string.error_password_no_special_character)
+
+        AuthDomainError.Password.NO_UPPERCASE ->
+            StringResource(R.string.error_password_no_uppercase)
+
+        AuthDomainError.Password.NO_LOWERCASE ->
+            StringResource(R.string.error_password_no_lowercase)
+
+
     }
 }

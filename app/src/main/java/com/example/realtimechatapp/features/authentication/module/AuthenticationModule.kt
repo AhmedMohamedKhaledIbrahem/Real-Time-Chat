@@ -12,19 +12,21 @@ import com.example.realtimechatapp.features.authentication.domain.usecase.signin
 import com.example.realtimechatapp.features.authentication.domain.usecase.signin.SignInUseCaseImpl
 import com.example.realtimechatapp.features.authentication.domain.usecase.signup.SignUpUseCase
 import com.example.realtimechatapp.features.authentication.domain.usecase.signup.SignUpUseCaseImpl
-import com.example.realtimechatapp.features.authentication.domain.validator.EmailValidator
-import com.example.realtimechatapp.features.authentication.domain.validator.RegexEmailValidator
+import com.example.realtimechatapp.features.authentication.domain.validator.Validator
+import com.example.realtimechatapp.features.authentication.domain.validator.ValidatorImpl
+import com.example.realtimechatapp.features.authentication.presentation.controller.forgetpassword.ForgetPasswordViewModel
 import com.example.realtimechatapp.features.authentication.presentation.controller.signin.SignInViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val authenticationModule = module {
-    single<AuthenticationRemoteDataSource> { AuthenticationRemoteDataSourceImpl(get(),get()) }
-    single<AuthenticationLocalDataSource> { AuthenticationLocalDataSourceImpl(get(),get()) }
+    single<AuthenticationRemoteDataSource> { AuthenticationRemoteDataSourceImpl(get(), get()) }
+    single<AuthenticationLocalDataSource> { AuthenticationLocalDataSourceImpl(get(), get()) }
     single<AuthenticationRepository> { AuthenticationRepositoryImpl(get(), get(), get()) }
-    single<EmailValidator> { RegexEmailValidator() }
+    single<Validator> { ValidatorImpl() }
     single<SignInUseCase> { SignInUseCaseImpl(get(), get()) }
     single<SignUpUseCase> { SignUpUseCaseImpl(get()) }
     single<ForgetPasswordUseCase> { ForgetPasswordUseCaseImpl(get()) }
     viewModel { SignInViewModel(get()) }
+    viewModel { ForgetPasswordViewModel(get()) }
 }

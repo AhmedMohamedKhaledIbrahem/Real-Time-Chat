@@ -10,14 +10,27 @@
     <string name="error_network_unavailable">You’re offline. Please check your internet connection.</string>
     <string name="error_invalid_sign_up_params">Please fill in all sign-up fields correctly.</string>
     <string name="error_invalid_login_params">Please enter valid login information.</string>
-    <string name="error_invalid_email">That doesn’t look like a valid email address.</string>
     <string name="error_timeout">It’s taking too long. Please try again in a moment.</string>
     <string name="error_network_unknown">Something went wrong. Please try again.</string>
     <string name="error_no_user_data_found">We couldn’t find your user data. Please try again or contact support.</string>
-
-
     <!-- Local Errors -->
     <string name="error_database_error">Something went wrong. Please try again later.</string>
     <string name="error_read_failed">We couldn’t load your data. Please try again.</string>
     <string name="error_local_unknown">Oops! Something unexpected happened.</string>
+    <!-- Name Validation -->
+    <string name="error_invalid_name">Please enter a valid name.</string>
+    <!-- Email Validation -->
+    <string name="error_invalid_email">Please enter a valid email address.</string>
+    <!-- Password Validation -->
+    <string name="error_password_too_short">Password must be at least 7 characters long.</string>
+    <string name="error_password_no_digit">Password must include at least one number.</string>
+    <string name="error_password_no_special_character">Password must include at least one special character.</string>
+    <string name="error_password_no_uppercase">Password must include at least one uppercase letter.</string>
+    <string name="error_password_no_lowercase">Password must include at least one lowercase letter.</string>
+
+    <!-- Phone Validation -->
+    <string name="error_invalid_phone">Please enter a valid phone number starting with 010, 011, 012, or 015.</string>
+
+    <string name="forgot_password_link_sent_message">A password reset link has been sent to your email.</string>
+
 </resources>
