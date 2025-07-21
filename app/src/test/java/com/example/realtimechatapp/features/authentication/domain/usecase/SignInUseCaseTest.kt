@@ -5,7 +5,7 @@ import com.example.realtimechatapp.core.utils.Result
 import com.example.realtimechatapp.features.authentication.domain.repository.AuthenticationRepository
 import com.example.realtimechatapp.features.authentication.domain.usecase.signin.SignInUseCase
 import com.example.realtimechatapp.features.authentication.domain.usecase.signin.SignInUseCaseImpl
-import com.example.realtimechatapp.features.authentication.domain.validator.EmailValidator
+import com.example.realtimechatapp.features.authentication.domain.validator.Validator
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,12 +19,12 @@ import org.junit.Test
 
 class SignInUseCaseTest {
     private val repository = mockk<AuthenticationRepository>()
-    private val regexEmailValidator = mockk<EmailValidator>()
+    private val regexValidator = mockk<Validator>()
     private lateinit var useCase: SignInUseCase
 
     @Before
     fun setUp() {
-        useCase = SignInUseCaseImpl(repository = repository, emailValidator = regexEmailValidator)
+        useCase = SignInUseCaseImpl(repository = repository, validator = regexValidator)
     }
 
     @After
@@ -37,7 +37,6 @@ class SignInUseCaseTest {
         runBlocking {
             val email = "test@example.com"
             val password = "password123"
-            every { regexEmailValidator.isValid(email) } returns true
             coEvery { repository.signIn(email, password) } returns Result.Success(Unit)
             val result = useCase.invoke(email, password)
             assertTrue(result is Result.Success)
@@ -66,7 +65,6 @@ class SignInUseCaseTest {
         runBlocking {
             val email = "sda23.com"
             val password = "password123"
-            every { regexEmailValidator.isValid(email) } returns false
             coEvery {
                 repository.signIn(email, password)
             } returns Result.Error(AuthDomainError.Network.INVALID_EMAIL)
