@@ -74,8 +74,8 @@ private val DarkColorScheme = darkColorScheme(
     outline = greyWhisperDark,
 )
 val shapes = Shapes(
-    extraSmall = RoundedCornerShape(6.dp),
-    medium = RoundedCornerShape(16.dp),
+    extraSmall = RoundedCornerShape(10.dp),
+    medium = RoundedCornerShape(18.dp),
 )
 
 @Composable
