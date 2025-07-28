@@ -8,15 +8,16 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     id("kotlin-kapt")
+    id("kotlinx-serialization")
 
 }
 
 android {
-    namespace = "com.example.realtimechatapp"
+    namespace = "com.example.realtimechat"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.realtimechatapp"
+        applicationId = "com.example.realtimechat"
         minSdk = 29
         targetSdk = 36
         versionCode = 1
@@ -52,7 +53,7 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
-            freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
+            //freeCompilerArgs.add("-XXLanguage:+PropertyParamAnnotationDefaultTargetMode")
         }
     }
     buildFeatures {
@@ -77,6 +78,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.material3.adaptive)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
@@ -87,6 +89,9 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.kotlinx.serialization.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.7.0"))
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)

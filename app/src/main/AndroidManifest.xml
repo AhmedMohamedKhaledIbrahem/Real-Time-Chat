@@ -12,11 +12,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.RealTimeChatApp">
+        android:theme="@style/Theme.RealTimeChat">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.RealTimeChatApp">
+            android:theme="@style/Theme.RealTimeChat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

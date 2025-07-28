@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Real Time Chat App</string>
+    <string name="app_name">Real Time Chat</string>
     <!-- Network Errors -->
     <string name="error_auth_failed">We couldn’t log you in. Please check your details and try again.</string>
     <string name="error_user_not_found">We couldn’t find an account with that information.</string>
@@ -32,5 +32,19 @@
     <string name="error_invalid_phone">Please enter a valid phone number starting with 010, 011, 012, or 015.</string>
 
     <string name="forgot_password_link_sent_message">A password reset link has been sent to your email.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
+    <string name="forget_password">Forget Password?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="capture_your_thoughts_and_ideas">Capture your thoughts and ideas.</string>
+    <string name="phone">Phone</string>
+    <string name="name">Name</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_an_account_sign_in">Already have an account? Sign in</string>
+    <string name="create_an_account_to_start_chatting">Create an account to start chatting!</string>
+    <string name="forgetpassword">ForgetPassword</string>
+    <string name="to_reset_your_password_please_enter_the_email_address_associated_with_your_account">To reset your password, please enter the email address associated with your account.</string>
+    <string name="submit">Submit</string>
 
 </resources>
