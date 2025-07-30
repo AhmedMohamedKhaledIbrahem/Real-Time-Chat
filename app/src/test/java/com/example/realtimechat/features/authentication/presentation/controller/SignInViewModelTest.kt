@@ -1,7 +1,7 @@
 package com.example.realtimechat.features.authentication.presentation.controller
 
 import com.example.realtimechat.R
-import com.example.realtimechat.core.error.AuthDomainError
+import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.event.UiEvent
 import com.example.realtimechat.core.ui_text.UiText
 import com.example.realtimechat.core.utils.Result
@@ -142,7 +142,7 @@ class SignInViewModelTest {
     @Test
     fun `signIn should show error message when signIn is user not found`() {
         runTest {
-            val expectedError = AuthDomainError.Network.USER_NOT_FOUND
+            val expectedError = DomainError.Network.USER_NOT_FOUND
             viewModel.onEvent(SignInEvent.Email(email))
             viewModel.onEvent(SignInEvent.Password(password))
             val emailState = viewModel.signInState.value.user.orEmpty()
@@ -170,7 +170,7 @@ class SignInViewModelTest {
     @Test
     fun `signIn should show error message when signIn is invalid login params`() {
         runTest {
-            val expectedError = AuthDomainError.Network.INVALID_LOGIN_PARAMS
+            val expectedError = DomainError.Network.INVALID_LOGIN_PARAMS
             viewModel.onEvent(SignInEvent.Email(""))
             viewModel.onEvent(SignInEvent.Password(""))
             val emailState = viewModel.signInState.value.user.orEmpty()

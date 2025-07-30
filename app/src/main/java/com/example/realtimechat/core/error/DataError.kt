@@ -1,7 +1,7 @@
 package com.example.realtimechat.core.error
 
-sealed interface AuthDataError: Error {
-    enum class Network: AuthDataError {
+sealed interface DataError: Error {
+    enum class Network: DataError {
         AUTH_FAILED,
         USER_NOT_FOUND,
         USER_ALREADY_EXISTS,
@@ -14,7 +14,7 @@ sealed interface AuthDataError: Error {
         UNKNOWN,
 
     }
-    enum class Local : AuthDataError {
+    enum class Local : DataError {
         DATABASE_ERROR,
         READ_FAILED,
         UNKNOWN

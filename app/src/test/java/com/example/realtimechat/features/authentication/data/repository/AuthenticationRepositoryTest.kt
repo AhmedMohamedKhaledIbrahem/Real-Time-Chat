@@ -1,8 +1,8 @@
 package com.example.realtimechat.features.authentication.data.repository
 
 import com.example.internet_connection_monitor.network.InternetConnectionMonitor
-import com.example.realtimechat.core.error.AuthDataError
-import com.example.realtimechat.core.error.AuthDomainError
+import com.example.realtimechat.core.error.DataError
+import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toEntity
 import com.example.realtimechat.features.authentication.data.mapper.toSignUpModel
@@ -143,7 +143,7 @@ class AuthenticationRepositoryTest {
             )
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.EMAIL_NOT_VERIFIED
+                        result.error == DomainError.Network.EMAIL_NOT_VERIFIED
             )
             coVerify(exactly = 1) {
                 remoteDataSource.signIn(
@@ -167,7 +167,7 @@ class AuthenticationRepositoryTest {
             )
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.NETWORK_UNAVAILABLE
+                        result.error == DomainError.Network.NETWORK_UNAVAILABLE
             )
         }
     }
@@ -185,7 +185,7 @@ class AuthenticationRepositoryTest {
             coEvery {
                 remoteDataSource.sendEmailVerification()
             } returns Result.Error(
-                AuthDataError.Network.UNKNOWN
+                DataError.Network.UNKNOWN
             )
             val result = authenticationRepository.signIn(
                 mockEmailAndPassword().first,
@@ -193,7 +193,7 @@ class AuthenticationRepositoryTest {
             )
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.UNKNOWN
+                        result.error == DomainError.Network.UNKNOWN
             )
             coVerify(exactly = 1) {
                 remoteDataSource.signIn(
@@ -234,7 +234,7 @@ class AuthenticationRepositoryTest {
             coEvery {
                 localDataSource.activeUserByEmail(mockEmailAndPassword().first)
             } returns Result.Error(
-                AuthDataError.Local.UNKNOWN
+                DataError.Local.UNKNOWN
             )
             val result = authenticationRepository.signIn(
                 mockEmailAndPassword().first,
@@ -242,7 +242,7 @@ class AuthenticationRepositoryTest {
             )
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Local.UNKNOWN
+                        result.error == DomainError.Local.UNKNOWN
             )
             coVerify(exactly = 1) {
                 remoteDataSource.signIn(
@@ -266,7 +266,7 @@ class AuthenticationRepositoryTest {
                     mockEmailAndPassword().second,
                 )
             } returns Result.Error(
-                AuthDataError.Network.UNKNOWN
+                DataError.Network.UNKNOWN
             )
             val result = authenticationRepository.signIn(
                 mockEmailAndPassword().first,
@@ -274,7 +274,7 @@ class AuthenticationRepositoryTest {
             )
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.UNKNOWN
+                        result.error == DomainError.Network.UNKNOWN
             )
             coVerify(exactly = 1) {
                 remoteDataSource.signIn(
@@ -324,7 +324,7 @@ class AuthenticationRepositoryTest {
             val result = authenticationRepository.signUp(signUpModel.toEntity())
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.NETWORK_UNAVAILABLE
+                        result.error == DomainError.Network.NETWORK_UNAVAILABLE
             )
         }
     }
@@ -338,9 +338,9 @@ class AuthenticationRepositoryTest {
             every { signUpModel.toEntity() } returns signUpEntity
             coEvery {
                 remoteDataSource.signUp(signUpModel)
-            } returns Result.Error(AuthDataError.Network.USER_ALREADY_EXISTS)
+            } returns Result.Error(DataError.Network.USER_ALREADY_EXISTS)
             val result = authenticationRepository.signUp(signUpModel.toEntity())
-            assertTrue(result is Result.Error && result.error == AuthDomainError.Network.USER_ALREADY_EXISTS)
+            assertTrue(result is Result.Error && result.error == DomainError.Network.USER_ALREADY_EXISTS)
             coVerify { remoteDataSource.signUp(signUpModel) }
         }
     }
@@ -357,9 +357,9 @@ class AuthenticationRepositoryTest {
             } returns Result.Success(uid)
             coEvery {
                 localDataSource.saveUser(signUpModel, uid)
-            } returns Result.Error(AuthDataError.Local.DATABASE_ERROR)
+            } returns Result.Error(DataError.Local.DATABASE_ERROR)
             val result = authenticationRepository.signUp(signUpModel.toEntity())
-            assertTrue(result is Result.Error && result.error == AuthDomainError.Local.DATABASE_ERROR)
+            assertTrue(result is Result.Error && result.error == DomainError.Local.DATABASE_ERROR)
             coVerify { remoteDataSource.signUp(signUpModel) }
             coVerify { localDataSource.saveUser(signUpModel, uid) }
         }
@@ -385,7 +385,7 @@ class AuthenticationRepositoryTest {
             hasConnection(false)
             val email = "test@example.com"
             val result = authenticationRepository.forgotPassword(email)
-            assertTrue(result is Result.Error && result.error == AuthDomainError.Network.NETWORK_UNAVAILABLE)
+            assertTrue(result is Result.Error && result.error == DomainError.Network.NETWORK_UNAVAILABLE)
         }
     }
 
@@ -396,9 +396,9 @@ class AuthenticationRepositoryTest {
             val email = "test@example.com"
             coEvery {
                 remoteDataSource.forgotPassword(email)
-            } returns Result.Error(AuthDataError.Network.USER_NOT_FOUND)
+            } returns Result.Error(DataError.Network.USER_NOT_FOUND)
             val result = authenticationRepository.forgotPassword(email)
-            assertTrue(result is Result.Error && result.error == AuthDomainError.Network.USER_NOT_FOUND)
+            assertTrue(result is Result.Error && result.error == DomainError.Network.USER_NOT_FOUND)
             coVerify { remoteDataSource.forgotPassword(email) }
         }
     }

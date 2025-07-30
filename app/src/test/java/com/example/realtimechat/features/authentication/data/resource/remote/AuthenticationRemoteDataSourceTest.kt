@@ -1,7 +1,7 @@
 package com.example.realtimechat.features.authentication.data.resource.remote
 
 import com.example.realtimechat.BuildConfig
-import com.example.realtimechat.core.error.AuthDataError
+import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.firebase.FirebaseInstance
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
@@ -156,7 +156,7 @@ class AuthenticationRemoteDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.AUTH_FAILED, (result as Result.Error).error)
+            assertEquals(DataError.Network.AUTH_FAILED, (result as Result.Error).error)
         }
     }
 
@@ -195,7 +195,7 @@ class AuthenticationRemoteDataSourceTest {
             val result = authenticationRemoteDataSource.fetchUser()
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.NO_USER_LOGGED_IN, (result as Result.Error).error)
+            assertEquals(DataError.Network.NO_USER_LOGGED_IN, (result as Result.Error).error)
         }
     }
 
@@ -217,7 +217,7 @@ class AuthenticationRemoteDataSourceTest {
             val result = authenticationRemoteDataSource.fetchUser()
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.NO_USER_DATA_FOUND, (result as Result.Error).error)
+            assertEquals(DataError.Network.NO_USER_DATA_FOUND, (result as Result.Error).error)
         }
     }
 
@@ -273,7 +273,7 @@ class AuthenticationRemoteDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.AUTH_FAILED, (result as Result.Error).error)
+            assertEquals(DataError.Network.AUTH_FAILED, (result as Result.Error).error)
         }
     }
 
@@ -296,7 +296,7 @@ class AuthenticationRemoteDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.USER_ALREADY_EXISTS, (result as Result.Error).error)
+            assertEquals(DataError.Network.USER_ALREADY_EXISTS, (result as Result.Error).error)
         }
     }
 
@@ -336,7 +336,7 @@ class AuthenticationRemoteDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.USER_NOT_FOUND, (result as Result.Error).error)
+            assertEquals(DataError.Network.USER_NOT_FOUND, (result as Result.Error).error)
         }
     }
 
@@ -374,7 +374,7 @@ class AuthenticationRemoteDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Network.NO_USER_LOGGED_IN, (result as Result.Error).error)
+            assertEquals(DataError.Network.NO_USER_LOGGED_IN, (result as Result.Error).error)
         }
     }
 
