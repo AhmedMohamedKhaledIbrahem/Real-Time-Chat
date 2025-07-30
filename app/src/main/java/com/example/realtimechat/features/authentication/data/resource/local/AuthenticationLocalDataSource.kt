@@ -2,7 +2,7 @@ package com.example.realtimechat.features.authentication.data.resource.local
 
 import com.example.realtimechat.core.database.data.dao.user.UserDao
 import com.example.realtimechat.core.database.data.entity.user.UserEntity
-import com.example.realtimechat.core.error.AuthDataError
+import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toLocalDataError
@@ -14,14 +14,14 @@ interface AuthenticationLocalDataSource {
     suspend fun saveUser(
         userParams: SignUpModel,
         uid: String
-    ): Result<Unit, AuthDataError.Local>
+    ): Result<Unit, DataError.Local>
 
-    suspend fun getUser(): Result<Flow<UserEntity>, AuthDataError.Local>
-    suspend fun isUserExist(): Result<UserEntity?, AuthDataError.Local>
-    suspend fun deleteUser(): Result<Unit, AuthDataError.Local>
-    suspend fun updateUser(userParams: UserEntity): Result<Unit, AuthDataError.Local>
+    suspend fun getUser(): Result<Flow<UserEntity>, DataError.Local>
+    suspend fun isUserExist(): Result<UserEntity?, DataError.Local>
+    suspend fun deleteUser(): Result<Unit, DataError.Local>
+    suspend fun updateUser(userParams: UserEntity): Result<Unit, DataError.Local>
 
-    suspend fun activeUserByEmail(email: String): Result<Unit, AuthDataError.Local>
+    suspend fun activeUserByEmail(email: String): Result<Unit, DataError.Local>
 }
 
 class AuthenticationLocalDataSourceImpl(
@@ -31,7 +31,7 @@ class AuthenticationLocalDataSourceImpl(
     override suspend fun saveUser(
         userParams: SignUpModel,
         uid: String
-    ): Result<Unit, AuthDataError.Local> {
+    ): Result<Unit, DataError.Local> {
         return try {
             val userEntity = userParams.toUserEntity(uid)
             dao.insertUser(userEntity)
@@ -42,7 +42,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun getUser(): Result<Flow<UserEntity>, AuthDataError.Local> {
+    override suspend fun getUser(): Result<Flow<UserEntity>, DataError.Local> {
         return try {
             val user = dao.getUser()
             Result.Success(user)
@@ -52,7 +52,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun isUserExist(): Result<UserEntity?, AuthDataError.Local> {
+    override suspend fun isUserExist(): Result<UserEntity?, DataError.Local> {
         return try {
             val isUserExist = dao.isUserExist()
             Result.Success(isUserExist)
@@ -62,7 +62,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun deleteUser(): Result<Unit, AuthDataError.Local> {
+    override suspend fun deleteUser(): Result<Unit, DataError.Local> {
         return try {
             dao.deleteUser()
             Result.Success(Unit)
@@ -72,7 +72,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun updateUser(userParams: UserEntity): Result<Unit, AuthDataError.Local> {
+    override suspend fun updateUser(userParams: UserEntity): Result<Unit, DataError.Local> {
         return try {
             dao.updateUser(userParams)
             Result.Success(Unit)
@@ -82,7 +82,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun activeUserByEmail(email: String): Result<Unit, AuthDataError.Local> {
+    override suspend fun activeUserByEmail(email: String): Result<Unit, DataError.Local> {
         return try {
             dao.updateIsVerifiedByEmail(email)
             Result.Success(Unit)

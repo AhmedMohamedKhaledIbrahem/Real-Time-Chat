@@ -1,7 +1,7 @@
 package com.example.realtimechat.features.authentication.data.repository
 
 import com.example.internet_connection_monitor.network.InternetConnectionMonitor
-import com.example.realtimechat.core.error.AuthDomainError
+import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.extension.fold
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toDomainError
@@ -20,9 +20,9 @@ class AuthenticationRepositoryImpl(
     override suspend fun signIn(
         email: String,
         password: String
-    ): Result<Unit, AuthDomainError> {
+    ): Result<Unit, DomainError> {
         if (!internetConnectionMonitor.hasConnection()) {
-            return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
         }
 
         return remoteDataSource.signIn(email, password).fold(
@@ -40,11 +40,11 @@ class AuthenticationRepositoryImpl(
         )
     }
 
-    override suspend fun sendVerificationEmail(isVerified: Boolean): Result<Unit, AuthDomainError> {
+    override suspend fun sendVerificationEmail(isVerified: Boolean): Result<Unit, DomainError> {
         return if (!isVerified) {
             when (val verificationResult =
                 remoteDataSource.sendEmailVerification()) {
-                is Result.Success -> Result.Error(AuthDomainError.Network.EMAIL_NOT_VERIFIED)
+                is Result.Success -> Result.Error(DomainError.Network.EMAIL_NOT_VERIFIED)
                 is Result.Error -> Result.Error(verificationResult.error.toDomainError())
             }
         } else {
@@ -53,7 +53,7 @@ class AuthenticationRepositoryImpl(
 
     }
 
-    override suspend fun saveUser(isVerified: Boolean): Result<Unit, AuthDomainError> {
+    override suspend fun saveUser(isVerified: Boolean): Result<Unit, DomainError> {
         return localDataSource.isUserExist().fold(
             onError = {
                 Result.Error(it.toDomainError())
@@ -61,7 +61,7 @@ class AuthenticationRepositoryImpl(
             onSuccess = { userEntity ->
                 when {
                     !internetConnectionMonitor.hasConnection() -> {
-                        return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
+                        return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
                     }
                     userEntity == null && isVerified -> {
                         return remoteDataSource.fetchUser().fold(
@@ -91,7 +91,7 @@ class AuthenticationRepositoryImpl(
         )
     }
 
-    override suspend fun activeUserByEmail(email: String): Result<Unit, AuthDomainError> {
+    override suspend fun activeUserByEmail(email: String): Result<Unit, DomainError> {
         return when (val localResult = localDataSource.activeUserByEmail(email)) {
             is Result.Success -> Result.Success(Unit)
             is Result.Error -> Result.Error(localResult.error.toDomainError())
@@ -99,9 +99,9 @@ class AuthenticationRepositoryImpl(
     }
 
 
-    override suspend fun signUp(signUpParams: SignUpEntity): Result<Unit, AuthDomainError> {
+    override suspend fun signUp(signUpParams: SignUpEntity): Result<Unit, DomainError> {
         if (!internetConnectionMonitor.hasConnection()) {
-            return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
         }
         val signUpModel = signUpParams.toModel()
 
@@ -123,9 +123,9 @@ class AuthenticationRepositoryImpl(
         )
     }
 
-    override suspend fun forgotPassword(email: String): Result<Unit, AuthDomainError> {
+    override suspend fun forgotPassword(email: String): Result<Unit, DomainError> {
         if (!internetConnectionMonitor.hasConnection()) {
-            return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
         }
         return remoteDataSource.forgotPassword(email).fold(
             onError = {
@@ -137,9 +137,9 @@ class AuthenticationRepositoryImpl(
         )
     }
 
-    override suspend fun isLoggedIn(): Result<Boolean, AuthDomainError> {
+    override suspend fun isLoggedIn(): Result<Boolean, DomainError> {
         if (!internetConnectionMonitor.hasConnection()) {
-            return Result.Error(AuthDomainError.Network.NETWORK_UNAVAILABLE)
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
         }
         return remoteDataSource.isLoggedIn().fold(
             onError = {

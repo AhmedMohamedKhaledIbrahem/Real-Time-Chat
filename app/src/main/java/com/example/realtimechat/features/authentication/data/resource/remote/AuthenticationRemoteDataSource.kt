@@ -1,7 +1,7 @@
 package com.example.realtimechat.features.authentication.data.resource.remote
 
 import com.example.realtimechat.BuildConfig
-import com.example.realtimechat.core.error.AuthDataError
+import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.firebase.FirebaseInstance
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
@@ -16,13 +16,13 @@ interface AuthenticationRemoteDataSource {
     suspend fun signIn(
         email: String,
         password: String
-    ): Result<Boolean, AuthDataError>
+    ): Result<Boolean, DataError>
 
-    suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError>
-    suspend fun fetchUser(): Result<Pair<UserModel, String>, AuthDataError>
-    suspend fun forgotPassword(email: String): Result<Unit, AuthDataError>
-    suspend fun sendEmailVerification(): Result<Unit, AuthDataError>
-    suspend fun isLoggedIn(): Result<Boolean, AuthDataError>
+    suspend fun signUp(signUpParams: SignUpModel): Result<String, DataError>
+    suspend fun fetchUser(): Result<Pair<UserModel, String>, DataError>
+    suspend fun forgotPassword(email: String): Result<Unit, DataError>
+    suspend fun sendEmailVerification(): Result<Unit, DataError>
+    suspend fun isLoggedIn(): Result<Boolean, DataError>
 }
 
 class AuthenticationRemoteDataSourceImpl(
@@ -33,7 +33,7 @@ class AuthenticationRemoteDataSourceImpl(
     override suspend fun signIn(
         email: String,
         password: String
-    ): Result<Boolean, AuthDataError> {
+    ): Result<Boolean, DataError> {
         return try {
             val resultAsync =
                 firebaseInstance.firebaseAuth().signInWithEmailAndPassword(email, password)
@@ -59,7 +59,7 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun fetchUser(): Result<Pair<UserModel, String>, AuthDataError> {
+    override suspend fun fetchUser(): Result<Pair<UserModel, String>, DataError> {
         return try {
             val user = firebaseInstance.firebaseAuth().currentUser
                 ?: run {
@@ -106,7 +106,7 @@ class AuthenticationRemoteDataSourceImpl(
 
     }
 
-    override suspend fun signUp(signUpParams: SignUpModel): Result<String, AuthDataError> {
+    override suspend fun signUp(signUpParams: SignUpModel): Result<String, DataError> {
         return try {
             val resultAsync = firebaseInstance.firebaseAuth().createUserWithEmailAndPassword(
                 signUpParams.email,
@@ -129,7 +129,7 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun forgotPassword(email: String): Result<Unit, AuthDataError> {
+    override suspend fun forgotPassword(email: String): Result<Unit, DataError> {
         return try {
             firebaseInstance.firebaseAuth().sendPasswordResetEmail(email).await()
             Result.Success(Unit)
@@ -139,7 +139,7 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun sendEmailVerification(): Result<Unit, AuthDataError> {
+    override suspend fun sendEmailVerification(): Result<Unit, DataError> {
         return try {
             val user = firebaseInstance.firebaseAuth().currentUser
                 ?: throw FirebaseAuthException(
@@ -154,7 +154,7 @@ class AuthenticationRemoteDataSourceImpl(
         }
     }
 
-    override suspend fun isLoggedIn(): Result<Boolean, AuthDataError> {
+    override suspend fun isLoggedIn(): Result<Boolean, DataError> {
         return try {
           val user = firebaseInstance.firebaseAuth().currentUser != null
           Result.Success(user)

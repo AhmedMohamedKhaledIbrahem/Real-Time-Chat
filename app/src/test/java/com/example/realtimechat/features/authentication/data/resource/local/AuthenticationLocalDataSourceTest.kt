@@ -3,7 +3,7 @@ package com.example.realtimechat.features.authentication.data.resource.local
 import android.database.sqlite.SQLiteException
 import com.example.realtimechat.core.database.data.dao.user.UserDao
 import com.example.realtimechat.core.database.data.entity.user.UserEntity
-import com.example.realtimechat.core.error.AuthDataError
+import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toUserEntity
@@ -86,7 +86,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.DATABASE_ERROR, (result as Result.Error).error)
+            assertEquals(DataError.Local.DATABASE_ERROR, (result as Result.Error).error)
         }
     }
 
@@ -125,7 +125,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.READ_FAILED, (result as Result.Error).error)
+            assertEquals(DataError.Local.READ_FAILED, (result as Result.Error).error)
         }
     }
 
@@ -159,7 +159,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.DATABASE_ERROR, (result as Result.Error).error)
+            assertEquals(DataError.Local.DATABASE_ERROR, (result as Result.Error).error)
         }
     }
 
@@ -195,7 +195,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.DATABASE_ERROR, (result as Result.Error).error)
+            assertEquals(DataError.Local.DATABASE_ERROR, (result as Result.Error).error)
         }
     }
 
@@ -231,7 +231,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.READ_FAILED, (result as Result.Error).error)
+            assertEquals(DataError.Local.READ_FAILED, (result as Result.Error).error)
         }
     }
     @Test
@@ -273,7 +273,7 @@ class AuthenticationLocalDataSourceTest {
 
             // Then
             assertTrue(result is Result.Error)
-            assertEquals(AuthDataError.Local.DATABASE_ERROR, (result as Result.Error).error)
+            assertEquals(DataError.Local.DATABASE_ERROR, (result as Result.Error).error)
         }
     }
 

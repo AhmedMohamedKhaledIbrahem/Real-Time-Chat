@@ -1,6 +1,6 @@
 package com.example.realtimechat.features.authentication.domain.usecase
 
-import com.example.realtimechat.core.error.AuthDomainError
+import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.domain.repository.AuthenticationRepository
 import com.example.realtimechat.features.authentication.domain.usecase.signin.SignInUseCase
@@ -50,11 +50,11 @@ class SignInUseCaseTest {
             val password = ""
             coEvery {
                 repository.signIn(email, password)
-            } returns Result.Error(AuthDomainError.Network.INVALID_LOGIN_PARAMS)
+            } returns Result.Error(DomainError.Network.INVALID_LOGIN_PARAMS)
             val result = useCase.invoke(email, password)
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.INVALID_LOGIN_PARAMS
+                        result.error == DomainError.Network.INVALID_LOGIN_PARAMS
             )
             coVerify(exactly = 0) { repository.signIn(email, password) }
         }
@@ -66,11 +66,11 @@ class SignInUseCaseTest {
             val password = "password123"
             coEvery {
                 repository.signIn(email, password)
-            } returns Result.Error(AuthDomainError.Network.INVALID_EMAIL)
+            } returns Result.Error(DomainError.Network.INVALID_EMAIL)
             val result = useCase.invoke(email, password)
             assertTrue(
                 result is Result.Error &&
-                        result.error == AuthDomainError.Network.INVALID_EMAIL
+                        result.error == DomainError.Network.INVALID_EMAIL
             )
             coVerify(exactly = 0) { repository.signIn(email, password) }
         }

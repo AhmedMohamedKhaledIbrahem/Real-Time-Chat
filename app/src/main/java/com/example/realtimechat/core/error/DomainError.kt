@@ -1,7 +1,7 @@
 package com.example.realtimechat.core.error
 
-sealed interface AuthDomainError : Error {
-    enum class Network : AuthDomainError {
+sealed interface DomainError : Error {
+    enum class Network : DomainError {
         AUTH_FAILED,
         USER_NOT_FOUND,
         USER_ALREADY_EXISTS,
@@ -18,26 +18,26 @@ sealed interface AuthDomainError : Error {
 
     }
 
-    enum class Local : AuthDomainError {
+    enum class Local : DomainError {
         DATABASE_ERROR,
         READ_FAILED,
         UNKNOWN
     }
 
-    enum class Password:AuthDomainError{
+    enum class Password:DomainError{
         TOO_SHORT,
         NO_DIGIT,
         NO_SPECIAL_CHARACTER,
         NO_UPPERCASE,
         NO_LOWERCASE,
     }
-    enum class Email:AuthDomainError{
+    enum class Email:DomainError{
         INVALID_EMAIL,
     }
-    enum class Name:AuthDomainError{
+    enum class Name:DomainError{
         INVALID_NAME,
     }
-    enum class Phone:AuthDomainError{
+    enum class Phone:DomainError{
         INVALID_PHONE,
     }
 
