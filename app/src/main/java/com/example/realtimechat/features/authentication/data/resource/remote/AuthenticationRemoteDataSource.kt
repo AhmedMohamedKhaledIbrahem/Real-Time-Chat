@@ -23,6 +23,8 @@ interface AuthenticationRemoteDataSource {
     suspend fun forgotPassword(email: String): Result<Unit, DataError>
     suspend fun sendEmailVerification(): Result<Unit, DataError>
     suspend fun isLoggedIn(): Result<Boolean, DataError>
+    suspend fun saveFcmToken(token: String): Result<Unit, DataError>
+    suspend fun getFcmToken(): Result<String, DataError>
 }
 
 class AuthenticationRemoteDataSourceImpl(
@@ -92,7 +94,7 @@ class AuthenticationRemoteDataSourceImpl(
                         NO_USER_DATA_FOUND_MESSAGE
                     )
                     throw FirebaseAuthException(
-                        NO_USER_DATA_FOUND_CODE ,
+                        NO_USER_DATA_FOUND_CODE,
                         NO_USER_DATA_FOUND_MESSAGE
                     )
                 }
@@ -156,22 +158,65 @@ class AuthenticationRemoteDataSourceImpl(
 
     override suspend fun isLoggedIn(): Result<Boolean, DataError> {
         return try {
-          val user = firebaseInstance.firebaseAuth().currentUser != null
-          Result.Success(user)
-        }catch (e: Exception){
+            val user = firebaseInstance.firebaseAuth().currentUser != null
+            Result.Success(user)
+        } catch (e: Exception) {
             e(e, "Error checking if user is logged in")
             Result.Error(e.toRemoteDataError())
         }
     }
 
+    override suspend fun saveFcmToken(token: String): Result<Unit, DataError> {
+        return try {
+            val user = firebaseInstance.firebaseAuth().currentUser ?: run {
+                run {
+                    e(
+                        FirebaseAuthException(
+                            NO_USER_ERROR_CODE,
+                            NO_USER_LOGGED_IN_MESSAGE
+                        ),
+                        NO_USER_LOGGED_IN_MESSAGE
+                    )
+                    throw FirebaseAuthException(
+                        NO_USER_ERROR_CODE,
+                        NO_USER_LOGGED_IN_MESSAGE
+                    )
+                }
+            }
+            val uid = user.uid
+            val firebaseAsync = firebaseInstance.firebaseDatabase().getReference(
+                BuildConfig.DB_REFERENCE
+            ).child(uid).child(FCM).setValue(token)
+            firebaseAsync.await()
+            Result.Success(Unit)
+        } catch (e: Exception) {
+            e(e, ERROR_SAVE_FCM_TOKEN_CODE)
+            Result.Error(e.toRemoteDataError())
+        }
+    }
+
+    override suspend fun getFcmToken(): Result<String, DataError> {
+        return try {
+            val resultAsync = firebaseInstance.firebaseMessaging().token
+            val result = resultAsync.await()
+            Result.Success(result)
+        } catch (e: Exception) {
+            e(e, ERROR_GETTING_FCM_TOKEN_CODE)
+            Result.Error(e.toRemoteDataError())
+        }
+    }
+
     companion object {
+        private const val FCM = "Fcm"
         private const val NO_USER_DATA_FOUND_MESSAGE = "no user data found"
         private const val NO_USER_LOGGED_IN_MESSAGE = "no user logged in"
         private const val USER_CREATION_MESSAGE = "user creation failed"
-        private  const val USER_IS_NULL_MESSAGE = "User is null after sign-in"
+        private const val USER_IS_NULL_MESSAGE = "User is null after sign-in"
         private const val NO_USER_ERROR_CODE = "NO_USER"
         private const val AUTH_FAILED_ERROR_CODE = "AUTH_FAILED"
         private const val NO_USER_DATA_FOUND_CODE = "NO_USER_DATA_FOUND"
+        private const val ERROR_GETTING_FCM_TOKEN_CODE = "ERROR_GETTING_FCM_TOKEN"
+        private const val ERROR_SAVE_FCM_TOKEN_CODE = "ERROR_SAVE_FCM_TOKEN"
     }
 
 }
