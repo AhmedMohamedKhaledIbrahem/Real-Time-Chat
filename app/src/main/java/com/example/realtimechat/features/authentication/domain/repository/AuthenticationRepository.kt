@@ -12,4 +12,6 @@ interface AuthenticationRepository {
     suspend fun signUp(signUpParams: SignUpEntity): Result<Unit, DomainError>
     suspend fun forgotPassword(email:String): Result<Unit, DomainError>
     suspend fun isLoggedIn():Result<Boolean, DomainError>
+    suspend fun getFcmToken(): Result<String, DomainError>
+    suspend fun saveFcmToken(): Result<Unit, DomainError>
 }

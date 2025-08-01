@@ -3,6 +3,7 @@ package com.example.realtimechat.features.authentication.data.repository
 import com.example.internet_connection_monitor.network.InternetConnectionMonitor
 import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.extension.fold
+import com.example.realtimechat.core.shared_preference.RealTimeChatSharedPreference
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toDomainError
 import com.example.realtimechat.features.authentication.data.mapper.toModel
@@ -15,6 +16,7 @@ import com.example.realtimechat.features.authentication.domain.repository.Authen
 class AuthenticationRepositoryImpl(
     private val localDataSource: AuthenticationLocalDataSource,
     private val remoteDataSource: AuthenticationRemoteDataSource,
+    private val realTimeChatSharedPreference: RealTimeChatSharedPreference,
     private val internetConnectionMonitor: InternetConnectionMonitor
 ) : AuthenticationRepository {
     override suspend fun signIn(
@@ -35,7 +37,9 @@ class AuthenticationRepositoryImpl(
                 if (verificationResult is Result.Error) return@fold verificationResult
                 val saveUserResult = saveUser(isVerified)
                 if (saveUserResult is Result.Error) return@fold saveUserResult
-                return@fold activeUserByEmail(email)
+                val activeUserByEmailResult = activeUserByEmail(email)
+                if (activeUserByEmailResult is Result.Error) return@fold activeUserByEmailResult
+                saveFcmToken()
             }
         )
     }
@@ -63,6 +67,7 @@ class AuthenticationRepositoryImpl(
                     !internetConnectionMonitor.hasConnection() -> {
                         return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
                     }
+
                     userEntity == null && isVerified -> {
                         return remoteDataSource.fetchUser().fold(
                             onError = {
@@ -78,6 +83,7 @@ class AuthenticationRepositoryImpl(
                                         Result.Error(error.toDomainError())
                                     },
                                     onSuccess = {
+
                                         Result.Success(Unit)
                                     }
                                 )
@@ -149,5 +155,46 @@ class AuthenticationRepositoryImpl(
                 Result.Success(it)
             },
         )
+    }
+
+    override suspend fun getFcmToken(): Result<String, DomainError> {
+        if (!internetConnectionMonitor.hasConnection()) {
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
+        }
+        return remoteDataSource.getFcmToken().fold(
+            onError = {
+                Result.Error(it.toDomainError())
+            },
+            onSuccess = {
+                Result.Success(it)
+            }
+
+        )
+
+    }
+
+    override suspend fun saveFcmToken(): Result<Unit, DomainError> {
+        if (!internetConnectionMonitor.hasConnection()) {
+            return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
+        }
+        val getToken = realTimeChatSharedPreference.getToken()
+        return if (getToken == null) {
+            getFcmToken().fold(
+                onError = { Result.Error(it) },
+                onSuccess = {
+                    realTimeChatSharedPreference.saveToken(it)
+                    Result.Success(Unit)
+                }
+            )
+        } else {
+            remoteDataSource.saveFcmToken(getToken).fold(
+                onError = {
+                    Result.Error(it.toDomainError())
+                },
+                onSuccess = {
+                    Result.Success(Unit)
+                }
+            )
+        }
     }
 }

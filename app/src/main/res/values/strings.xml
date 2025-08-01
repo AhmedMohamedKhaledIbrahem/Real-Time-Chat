@@ -46,5 +46,9 @@
     <string name="forgetpassword">ForgetPassword</string>
     <string name="to_reset_your_password_please_enter_the_email_address_associated_with_your_account">To reset your password, please enter the email address associated with your account.</string>
     <string name="submit">Submit</string>
+    <string name="content_title">Add Request</string>
+    <string name="content_body">You have a new request from %s</string>
+    <string name="Accept">Accept</string>
+    <string name="Reject">Reject</string>
 
 </resources>
