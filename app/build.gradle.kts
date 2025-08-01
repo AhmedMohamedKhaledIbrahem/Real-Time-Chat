@@ -32,7 +32,10 @@ android {
         debug {
             isMinifyEnabled = false
             buildConfigField("String","DB_REFERENCE","\"users\"")
+            buildConfigField("String","DB_REFERENCE_CHAT_REQUEST","\"chat_requests\"")
             buildConfigField("String","DB_ROOM_REFERENCE","\"real_time_chat_app.db\"")
+            buildConfigField("String","SharedPreferences","\"RealTimeChatSharedPreferences\"")
+            buildConfigField("String","Email","\"email\"")
         }
 
         release {
@@ -42,7 +45,10 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String","DB_REFERENCE","\"users\"")
+            buildConfigField("String","DB_REFERENCE_CHAT_REQUEST","\"chat_requests\"")
             buildConfigField("String","DB_ROOM_REFERENCE","\"real_time_chat_app.db\"")
+            buildConfigField("String","SharedPreferences","\"RealTimeChatSharedPreferences\"")
+            buildConfigField("String","Email","\"email\"")
 
         }
     }
@@ -89,14 +95,15 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
     implementation(libs.kotlinx.serialization.core)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
-    implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:1.7.0"))
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.bom)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.crashlytics.ktx)
+    implementation(libs.firebase.messaging)
     implementation(libs.timber)
     implementation(libs.internet.connection.monitor)
     testImplementation(libs.junit)
