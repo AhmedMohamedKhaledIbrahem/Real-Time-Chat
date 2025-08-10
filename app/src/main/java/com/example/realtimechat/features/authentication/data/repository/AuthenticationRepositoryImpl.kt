@@ -5,7 +5,7 @@ import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.extension.fold
 import com.example.realtimechat.core.shared_preference.RealTimeChatSharedPreference
 import com.example.realtimechat.core.utils.Result
-import com.example.realtimechat.features.authentication.data.mapper.toDomainError
+import com.example.realtimechat.core.utils.toDomainError
 import com.example.realtimechat.features.authentication.data.mapper.toModel
 import com.example.realtimechat.features.authentication.data.mapper.toSignUpModel
 import com.example.realtimechat.features.authentication.data.resource.local.AuthenticationLocalDataSource
@@ -27,21 +27,21 @@ class AuthenticationRepositoryImpl(
             return Result.Error(DomainError.Network.NETWORK_UNAVAILABLE)
         }
 
-        return remoteDataSource.signIn(email, password).fold(
-            onError = {
-                Result.Error(it.toDomainError())
-            },
-            onSuccess = { signInResult ->
-                val isVerified = signInResult
-                val verificationResult = sendVerificationEmail(isVerified)
-                if (verificationResult is Result.Error) return@fold verificationResult
-                val saveUserResult = saveUser(isVerified)
-                if (saveUserResult is Result.Error) return@fold saveUserResult
-                val activeUserByEmailResult = activeUserByEmail(email)
-                if (activeUserByEmailResult is Result.Error) return@fold activeUserByEmailResult
-                saveFcmToken()
-            }
+        val result = remoteDataSource.signIn(email, password).fold(
+            onError = { return Result.Error(it.toDomainError()) },
+            onSuccess = { it },
         )
+        val isVerified = result
+        val verificationResult = sendVerificationEmail(isVerified)
+        if (verificationResult is Result.Error) return verificationResult
+        val saveUserResult = saveUser(isVerified)
+        if (saveUserResult is Result.Error) return saveUserResult
+        val activeUserByEmailResult = activeUserByEmail(email)
+        if (activeUserByEmailResult is Result.Error) return activeUserByEmailResult
+        val saveFcmTokenResult = saveFcmToken()
+        if (saveFcmTokenResult is Result.Error) return saveFcmTokenResult
+        return Result.Success(Unit)
+
     }
 
     override suspend fun sendVerificationEmail(isVerified: Boolean): Result<Unit, DomainError> {
@@ -69,25 +69,18 @@ class AuthenticationRepositoryImpl(
                     }
 
                     userEntity == null && isVerified -> {
-                        return remoteDataSource.fetchUser().fold(
-                            onError = {
-                                Result.Error(it.toDomainError())
+                        val (remoteUser, token) = remoteDataSource.fetchUser().fold(
+                            onError = { return Result.Error(it.toDomainError()) },
+                            onSuccess = { it },
+                        )
+                        localDataSource.saveUser(
+                            remoteUser.toSignUpModel(),
+                            token
+                        ).fold(
+                            onError = { error ->
+                                return Result.Error(error.toDomainError())
                             },
-                            onSuccess = {
-                                val (remoteUser, token) = it
-                                localDataSource.saveUser(
-                                    remoteUser.toSignUpModel(),
-                                    token
-                                ).fold(
-                                    onError = { error ->
-                                        Result.Error(error.toDomainError())
-                                    },
-                                    onSuccess = {
-
-                                        Result.Success(Unit)
-                                    }
-                                )
-                            },
+                            onSuccess = { it }
                         )
 
                     }

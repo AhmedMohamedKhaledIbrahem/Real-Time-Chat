@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.realtimechat.core.event.UiEvent
 import com.example.realtimechat.core.extension.performUseCaseOperation
 import com.example.realtimechat.features.authentication.domain.usecase.is_logged.IsLoggedUseCase
-import com.example.realtimechat.features.authentication.presentation.asUiText
+import com.example.realtimechat.core.ui_text.asUiText
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 

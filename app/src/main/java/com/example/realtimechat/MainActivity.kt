@@ -1,5 +1,7 @@
 package com.example.realtimechat
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import com.example.realtimechat.core.navigation.NavigationRoot
 import com.example.realtimechat.ui.theme.RealTimeChatAppTheme
 
@@ -31,6 +34,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(0)
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                0
+            )
+        }
         setContent {
             RealTimeChatAppTheme {
                 val snackBarHostState = remember { SnackbarHostState() }

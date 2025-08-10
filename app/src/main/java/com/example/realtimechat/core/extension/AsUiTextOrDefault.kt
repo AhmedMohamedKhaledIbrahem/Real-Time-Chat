@@ -4,7 +4,7 @@ import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.ui_text.UiText
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.core.utils.RootError
-import com.example.realtimechat.features.authentication.presentation.asUiText
+import com.example.realtimechat.core.ui_text.asUiText
 
 
 inline fun <reified E : RootError> Result.Error<*, E>.asUiTextOrDefault(

@@ -1,8 +1,7 @@
-package com.example.realtimechat.features.authentication.presentation
+package com.example.realtimechat.core.ui_text
 
 import com.example.realtimechat.R
 import com.example.realtimechat.core.error.DomainError
-import com.example.realtimechat.core.ui_text.UiText
 import com.example.realtimechat.core.ui_text.UiText.StringResource
 
 fun DomainError.asUiText(): UiText {
@@ -81,6 +80,10 @@ fun DomainError.asUiText(): UiText {
         DomainError.Password.NO_LOWERCASE ->
             StringResource(R.string.error_password_no_lowercase)
 
+        DomainError.Network.SERIALIZATION ->
+            StringResource(R.string.error_serialization)
 
+        DomainError.Network.DATABASE_ERROR ->
+            StringResource(R.string.error_database_error)
     }
 }

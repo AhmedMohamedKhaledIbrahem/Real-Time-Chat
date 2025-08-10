@@ -32,7 +32,7 @@ val authenticationModule = module {
     single<SignUpUseCase> { SignUpUseCaseImpl(get()) }
     single<ForgetPasswordUseCase> { ForgetPasswordUseCaseImpl(get()) }
     single<IsLoggedUseCase>{ IsLoggedUseCaseImpl(get()) }
-    viewModel { SignInViewModel(get()) }
+    viewModel { SignInViewModel(get(),get()) }
     viewModel { SignUpViewModel(get(), get()) }
     viewModel { ForgetPasswordViewModel(get()) }
     viewModel { IsLoggedViewModel(get()) }

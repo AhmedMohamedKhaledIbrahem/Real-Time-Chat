@@ -50,5 +50,9 @@
     <string name="content_body">You have a new request from %s</string>
     <string name="Accept">Accept</string>
     <string name="Reject">Reject</string>
+    <string name="error_serialization">An unexpected issue occurred. We are working to fix it please try again shortly.</string>
+    <string name="request_added_successfully">Request added successfully</string>
+    <string name="title_fcm">You have a new request</string>
+    <string name="body_fcm">The %s has sent you a request</string>
 
 </resources>

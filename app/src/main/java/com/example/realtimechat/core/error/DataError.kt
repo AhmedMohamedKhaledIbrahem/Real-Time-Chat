@@ -11,6 +11,8 @@ sealed interface DataError: Error {
         NO_USER_DATA_FOUND,
         NETWORK_UNAVAILABLE,
         TIMEOUT,
+        SERIALIZATION,
+        DATABASE_ERROR,
         UNKNOWN,
 
     }

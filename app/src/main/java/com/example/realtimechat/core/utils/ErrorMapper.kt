@@ -1,4 +1,4 @@
-package com.example.realtimechat.features.authentication.data.mapper
+package com.example.realtimechat.core.utils
 
 import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.error.DomainError
@@ -14,7 +14,8 @@ fun DataError.Network.toDomainError(): DomainError.Network = when (this) {
     DataError.Network.NO_USER_LOGGED_IN -> DomainError.Network.NO_USER_LOGGED_IN
     DataError.Network.NO_USER_DATA_FOUND -> DomainError.Network.NO_USER_DATA_FOUND
     DataError.Network.UNKNOWN -> DomainError.Network.UNKNOWN
-
+    DataError.Network.SERIALIZATION -> DomainError.Network.SERIALIZATION
+    DataError.Network.DATABASE_ERROR -> DomainError.Network.DATABASE_ERROR
 }
 fun DataError.Local.toDomainError(): DomainError.Local = when (this) {
     DataError.Local.DATABASE_ERROR -> DomainError.Local.DATABASE_ERROR

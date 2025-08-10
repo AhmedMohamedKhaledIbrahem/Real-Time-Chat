@@ -5,7 +5,7 @@ import com.example.realtimechat.core.database.data.entity.user.UserEntity
 import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
-import com.example.realtimechat.features.authentication.data.mapper.toLocalDataError
+import com.example.realtimechat.core.utils.toLocalDataError
 import com.example.realtimechat.features.authentication.data.mapper.toUserEntity
 import com.example.realtimechat.features.authentication.data.model.SignUpModel
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +38,7 @@ class AuthenticationLocalDataSourceImpl(
             Result.Success(Unit)
         } catch (e: Exception) {
             e(throwable = e , message = "Error saving user")
+            d(message = e.message?:"")
             Result.Error(e.toLocalDataError())
         }
     }

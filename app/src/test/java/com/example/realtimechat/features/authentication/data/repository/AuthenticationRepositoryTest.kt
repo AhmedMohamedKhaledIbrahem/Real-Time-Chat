@@ -3,6 +3,7 @@ package com.example.realtimechat.features.authentication.data.repository
 import com.example.internet_connection_monitor.network.InternetConnectionMonitor
 import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.error.DomainError
+import com.example.realtimechat.core.shared_preference.RealTimeChatSharedPreference
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.authentication.data.mapper.toEntity
 import com.example.realtimechat.features.authentication.data.mapper.toSignUpModel
@@ -28,6 +29,7 @@ class AuthenticationRepositoryTest {
     private val localDataSource = mockk<AuthenticationLocalDataSource>()
     private val remoteDataSource = mockk<AuthenticationRemoteDataSource>()
     private val internetConnectionMonitor = mockk<InternetConnectionMonitor>()
+    private val realTimeChatSharedPreference = mockk<RealTimeChatSharedPreference>()
     private lateinit var authenticationRepository: AuthenticationRepository
 
     @Before
@@ -35,6 +37,7 @@ class AuthenticationRepositoryTest {
         authenticationRepository = AuthenticationRepositoryImpl(
             localDataSource,
             remoteDataSource,
+            realTimeChatSharedPreference,
             internetConnectionMonitor
         )
         mockkStatic(PATH_SIGN_UP_MAPPER)

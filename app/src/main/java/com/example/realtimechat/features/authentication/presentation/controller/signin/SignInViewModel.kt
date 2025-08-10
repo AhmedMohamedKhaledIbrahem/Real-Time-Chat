@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.realtimechat.core.event.UiEvent
 import com.example.realtimechat.core.extension.asUiTextOrDefault
 import com.example.realtimechat.core.extension.performUseCaseOperation
+import com.example.realtimechat.core.shared_preference.RealTimeChatSharedPreference
 import com.example.realtimechat.features.authentication.domain.usecase.signin.SignInUseCase
 import com.example.realtimechat.features.authentication.presentation.controller.signin.event.SignInEvent
 import com.example.realtimechat.features.authentication.presentation.controller.signin.state.SignInState
@@ -16,7 +17,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SignInViewModel(private val signInUseCase: SignInUseCase) : ViewModel() {
+class SignInViewModel(
+    private val signInUseCase: SignInUseCase,
+    private val sharedPreference: RealTimeChatSharedPreference
+) : ViewModel() {
     private val _signInEvent = Channel<UiEvent>()
     val signInEvent = _signInEvent.receiveAsFlow()
     private val _signInState = MutableStateFlow(SignInState())
@@ -63,9 +67,11 @@ class SignInViewModel(private val signInUseCase: SignInUseCase) : ViewModel() {
                 email = signInState.value.user.orEmpty(),
                 password = signInState.value.password.orEmpty(),
             )
+
         },
         onSuccess = {
             _signInState.update { it.copy(isLoading = false) }
+            sharedPreference.saveEmail(signInState.value.user.orEmpty())
             _signInEvent.send(UiEvent.NavEvent.HomeScreen)
 
         },

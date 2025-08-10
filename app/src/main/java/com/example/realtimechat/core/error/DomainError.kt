@@ -14,6 +14,8 @@ sealed interface DomainError : Error {
         INVALID_LOGIN_PARAMS,
         INVALID_EMAIL,
         TIMEOUT,
+        SERIALIZATION,
+        DATABASE_ERROR,
         UNKNOWN,
 
     }

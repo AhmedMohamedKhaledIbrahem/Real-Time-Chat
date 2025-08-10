@@ -10,6 +10,7 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.example.realtimechat.R
+import com.example.realtimechat.core.broadcast.AddRequestBroadCastReceiver
 
 abstract class RealTimeChatNotification {
     protected abstract val notificationManager: NotificationManager
@@ -59,9 +60,9 @@ class RealTimeChatNotificationImpl(private val context: Context) : RealTimeChatN
         val title = context.getString(R.string.content_title)
         val body = context.getString(R.string.content_body).format(message)
         val acceptIntent =
-            intent(context.getString(R.string.Accept), RealTimeChatNotificationImpl::class.java)
+            intent(context.getString(R.string.Accept), AddRequestBroadCastReceiver::class.java)
         val rejectIntent =
-            intent(context.getString(R.string.Reject), RealTimeChatNotificationImpl::class.java)
+            intent(context.getString(R.string.Reject), AddRequestBroadCastReceiver::class.java)
         val acceptTitle = context.getString(R.string.Accept)
         val rejectTitle = context.getString(R.string.Reject)
         return NotificationCompat.Builder(context, CHANNEL_ID)
@@ -76,7 +77,7 @@ class RealTimeChatNotificationImpl(private val context: Context) : RealTimeChatN
                     context,
                     0,
                     acceptIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
             .addAction(
@@ -86,7 +87,7 @@ class RealTimeChatNotificationImpl(private val context: Context) : RealTimeChatN
                     context,
                     1,
                     rejectIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
             .setAutoCancel(true)

@@ -5,7 +5,7 @@ import com.example.realtimechat.core.error.DataError
 import com.example.realtimechat.core.firebase.FirebaseInstance
 import com.example.realtimechat.core.logger.Logger
 import com.example.realtimechat.core.utils.Result
-import com.example.realtimechat.features.authentication.data.mapper.toRemoteDataError
+import com.example.realtimechat.core.utils.toRemoteDataError
 import com.example.realtimechat.features.authentication.data.mapper.toUserModel
 import com.example.realtimechat.features.authentication.data.model.SignUpModel
 import com.example.realtimechat.features.authentication.data.model.UserModel

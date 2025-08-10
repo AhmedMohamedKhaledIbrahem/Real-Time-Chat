@@ -15,7 +15,7 @@ interface UserDao {
     suspend fun insertUser(userParams: UserEntity)
 
     @Query("SELECT * FROM user")
-    fun getUser(): Flow<UserEntity>
+    suspend fun getUser(): UserEntity
 
     @Query("SELECT * FROM user ")
     suspend fun isUserExist(): UserEntity?

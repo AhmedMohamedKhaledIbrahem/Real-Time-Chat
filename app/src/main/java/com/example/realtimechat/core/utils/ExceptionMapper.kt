@@ -1,4 +1,4 @@
-package com.example.realtimechat.features.authentication.data.mapper
+package com.example.realtimechat.core.utils
 
 import android.database.sqlite.SQLiteException
 import com.example.realtimechat.core.error.DataError
@@ -9,6 +9,8 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.database.DatabaseException
+import kotlinx.serialization.SerializationException
 import java.io.IOException
 
 fun Exception.toRemoteDataError(): DataError = when (this) {
@@ -24,7 +26,9 @@ fun Exception.toRemoteDataError(): DataError = when (this) {
             else -> DataError.Network.UNKNOWN
         }
     }
+    is DatabaseException -> DataError.Network.DATABASE_ERROR
     is FirebaseTooManyRequestsException -> DataError.Network.TIMEOUT
+    is SerializationException -> DataError.Network.SERIALIZATION
     else -> DataError.Network.UNKNOWN
 }
 

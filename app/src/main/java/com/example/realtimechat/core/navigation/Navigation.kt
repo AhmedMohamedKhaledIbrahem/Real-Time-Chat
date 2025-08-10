@@ -2,10 +2,6 @@ package com.example.realtimechat.core.navigation
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -21,7 +17,10 @@ import com.example.realtimechat.features.authentication.presentation.controller.
 import com.example.realtimechat.features.authentication.presentation.screen.ForgetPasswordScreenRoot
 import com.example.realtimechat.features.authentication.presentation.screen.SignInScreenRoot
 import com.example.realtimechat.features.authentication.presentation.screen.SignUpScreenRoot
-import kotlinx.coroutines.flow.Flow
+import com.example.realtimechat.features.chat.presentation.controller.add_request.AddRequestViewModel
+import com.example.realtimechat.features.chat.presentation.controller.fcm.FcmViewModel
+import com.example.realtimechat.features.chat.presentation.screen.HomeScreenRoot
+import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.koinViewModel
 
 typealias splashScreen = UiEvent.NavEvent.SplashScreen
@@ -33,7 +32,7 @@ typealias homeScreen = UiEvent.NavEvent.HomeScreen
 @Composable
 fun NavigationRoot(
     snackbarHostState: SnackbarHostState,
-    ) {
+) {
     val backStack = rememberNavBackStack(splashScreen)
     NavDisplay(
         backStack = backStack,
@@ -47,7 +46,7 @@ fun NavigationRoot(
                 is UiEvent.NavEvent.SplashScreen -> {
                     NavEntry(
                         key = key
-                    ){
+                    ) {
                         val isLoggedViewModel = koinViewModel<IsLoggedViewModel>()
                         SplashScreenRoot(
                             isLoggedViewModel = isLoggedViewModel,
@@ -57,6 +56,7 @@ fun NavigationRoot(
                         )
                     }
                 }
+
                 is UiEvent.NavEvent.SignInScreen -> {
                     NavEntry(
                         key = key,
@@ -105,6 +105,18 @@ fun NavigationRoot(
                     NavEntry(
                         key = key,
                     ) {
+                        val addRequestViewModel = koinViewModel<AddRequestViewModel>()
+                        val fcmViewModel = koinViewModel<FcmViewModel>()
+                        HomeScreenRoot(
+                            snackbarHostState = snackbarHostState,
+                            addRequestViewModel = addRequestViewModel,
+                            fcmViewModel = fcmViewModel,
+                            signOutClick = {
+                                FirebaseAuth.getInstance().signOut()
+                                backStack.clear()
+                                backStack.add(signInScreen)
+                            }
+                        )
 
                     }
                 }
