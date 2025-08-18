@@ -96,7 +96,7 @@ class AuthenticationLocalDataSourceTest {
         runBlocking {
             // Given
             val userEntity = mockk<UserEntity>()
-            val userFlow = flowOf(userEntity)
+            val userFlow = userEntity
             coEvery { userDao.getUser() } returns userFlow
 
             // When

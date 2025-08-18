@@ -3,6 +3,7 @@ package com.example.realtimechat.features.authentication.presentation.controller
 import com.example.realtimechat.R
 import com.example.realtimechat.core.error.DomainError
 import com.example.realtimechat.core.event.UiEvent
+import com.example.realtimechat.core.shared_preference.RealTimeChatSharedPreference
 import com.example.realtimechat.core.ui_text.UiText
 import com.example.realtimechat.core.utils.Result
 import com.example.realtimechat.features.MainDispatcherRule
@@ -33,11 +34,12 @@ class SignInViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
     private val signInUseCase = mockk<SignInUseCase>()
+    private val sharedPreference = mockk<RealTimeChatSharedPreference>()
     private lateinit var viewModel: SignInViewModel
 
     @Before
     fun setUp() {
-        viewModel = SignInViewModel(signInUseCase)
+        viewModel = SignInViewModel(signInUseCase,sharedPreference)
     }
 
     @After

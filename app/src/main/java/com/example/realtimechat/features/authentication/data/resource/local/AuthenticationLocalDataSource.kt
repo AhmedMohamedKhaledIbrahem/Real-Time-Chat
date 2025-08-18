@@ -16,7 +16,7 @@ interface AuthenticationLocalDataSource {
         uid: String
     ): Result<Unit, DataError.Local>
 
-    suspend fun getUser(): Result<Flow<UserEntity>, DataError.Local>
+    suspend fun getUser(): Result<UserEntity, DataError.Local>
     suspend fun isUserExist(): Result<UserEntity?, DataError.Local>
     suspend fun deleteUser(): Result<Unit, DataError.Local>
     suspend fun updateUser(userParams: UserEntity): Result<Unit, DataError.Local>
@@ -43,7 +43,7 @@ class AuthenticationLocalDataSourceImpl(
         }
     }
 
-    override suspend fun getUser(): Result<Flow<UserEntity>, DataError.Local> {
+    override suspend fun getUser(): Result<UserEntity, DataError.Local> {
         return try {
             val user = dao.getUser()
             Result.Success(user)

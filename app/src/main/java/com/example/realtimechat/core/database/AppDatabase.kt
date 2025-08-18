@@ -4,11 +4,13 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.realtimechat.core.database.data.dao.chat_request.ChatRequestDao
 import com.example.realtimechat.core.database.data.dao.user.UserDao
+import com.example.realtimechat.core.database.data.entity.chat_request.ChatRequestEntity
 import com.example.realtimechat.core.database.data.entity.user.UserEntity
 
 @Database(
     entities = [
         UserEntity::class,
+        ChatRequestEntity::class
     ],
     version = 2,
     exportSchema = false

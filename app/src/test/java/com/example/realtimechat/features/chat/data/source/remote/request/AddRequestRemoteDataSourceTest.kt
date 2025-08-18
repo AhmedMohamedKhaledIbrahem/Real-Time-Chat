@@ -59,6 +59,7 @@ class AddRequestRemoteDataSourceTest {
     private val mockTask = mockk<Task<Void>>(relaxed = true)
     private val tReceiverUID = "receiverUID"
     private val tSenderUID = "sender_uid"
+    private val channelUId = "channel_uid"
 
     @Before
     fun setup() {
@@ -158,7 +159,7 @@ class AddRequestRemoteDataSourceTest {
         }
 
         every { secondChildRef.setValue(taddRequestModel) } returns mockTask
-        val result = addRequestRemoteDataSource.addRequest(taddRequestModel)
+        val result = addRequestRemoteDataSource.addRequest(taddRequestModel,channelUId)
         assert(result is Result.Success)
     }
 
@@ -168,7 +169,7 @@ class AddRequestRemoteDataSourceTest {
         coEvery {
             addRequestRemoteDataSource.receiveUid(taddRequestModel.receiverEmail)
         } returns Result.Error(DataError.Network.USER_NOT_FOUND)
-        val result = addRequestRemoteDataSource.addRequest(taddRequestModel)
+        val result = addRequestRemoteDataSource.addRequest(taddRequestModel,channelUId)
         assert(result is Result.Error)
     }
 
@@ -188,7 +189,7 @@ class AddRequestRemoteDataSourceTest {
             mockTask
         }
         every { secondChildRef.setValue(taddRequestModel) } returns mockTask
-        val result = addRequestRemoteDataSource.addRequest(taddRequestModel)
+        val result = addRequestRemoteDataSource.addRequest(taddRequestModel,channelUId)
         assert(result is Result.Error)
 
     }
@@ -200,7 +201,7 @@ class AddRequestRemoteDataSourceTest {
         }
         every { logger.e(any(), any()) } returns Unit
         every { firebaseAuth.currentUser } throws exception
-        val result = addRequestRemoteDataSource.addRequest(tAddRequestModel())
+        val result = addRequestRemoteDataSource.addRequest(tAddRequestModel(),channelUId)
         assert(result is Result.Error)
     }
 
@@ -208,6 +209,7 @@ class AddRequestRemoteDataSourceTest {
     fun `sendFcmRequest should return success when server responds with 200`() = runTest {
         val request = SendFCMRequestModel(
             fcmToken = "token",
+            channelId =  channelUId,
             title = "title",
             body = "body",
         )
@@ -219,6 +221,7 @@ class AddRequestRemoteDataSourceTest {
     fun `sendFcmRequest should return timeout error when server responds with 408`() = runTest {
         val request = SendFCMRequestModel(
             fcmToken = "token",
+            channelId =  channelUId,
             title = "title",
             body = "body",
         )
@@ -238,6 +241,7 @@ class AddRequestRemoteDataSourceTest {
         runTest {
             val request = SendFCMRequestModel(
                 fcmToken = "token",
+                channelId =  channelUId,
                 title = "title",
                 body = "body",
             )
@@ -270,7 +274,7 @@ class AddRequestRemoteDataSourceTest {
             mockTask
         }
         every { threeChildRef.setValue(status) } returns mockTask
-        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status)
+        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status, channelUId = channelUId)
         assertTrue(result is Result.Success)
     }
 
@@ -296,7 +300,7 @@ class AddRequestRemoteDataSourceTest {
             mockTask
         }
         every { threeChildRef.setValue(status) } returns mockTask
-        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status)
+        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status,channelUId)
         assertTrue(result is Result.Error)
     }
 
@@ -307,7 +311,7 @@ class AddRequestRemoteDataSourceTest {
         coEvery {
             addRequestRemoteDataSource.receiveUid(receiverEmail)
         } returns Result.Error(DataError.Network.USER_NOT_FOUND)
-        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status)
+        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status,channelUId)
         assertTrue(result is Result.Error)
         assertTrue((result as Result.Error).error == DataError.Network.USER_NOT_FOUND)
     }
@@ -322,7 +326,7 @@ class AddRequestRemoteDataSourceTest {
         coEvery {
             addRequestRemoteDataSource.senderUid()
         } returns Result.Error(DataError.Network.USER_NOT_FOUND)
-        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status)
+        val result = addRequestRemoteDataSource.addRequestStatus(receiverEmail, status,channelUId)
         assertTrue(result is Result.Error)
         assertTrue((result as Result.Error).error == DataError.Network.USER_NOT_FOUND)
     }

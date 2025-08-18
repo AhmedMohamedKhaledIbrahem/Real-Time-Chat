@@ -28,11 +28,13 @@ val chatModule = module {
     single<AddRequestLocalDataSource> {
         AddRequestLocalDataSourceImpl(
             get(),
+            get(),
             get()
         )
     }
     single<AddRequestRepository> {
         AddRequestRepositoryImpl(
+            get(),
             get(),
             get(),
             get()
